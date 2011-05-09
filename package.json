@@ -1,0 +1,26 @@
+{ "name": "toddick"
+, "version": "0.1.0"
+, "description": "An Erlang like framework for asynchronous programming in node.js."
+, "keywords": ["asynchronous", "concurrent", "actor", "erlang"]
+, "author":
+  { "name": "Mike Deem"
+  , "email: "mike@maimedleech.com"
+  , "url":  "http://maimedleech.com"
+  }
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/maimedleech/toddick.git"
+  }
+, "bugs" : { "web" : "http://github.com/maimedleech/toddick/issues" }
+, "licenses" :
+  [ { "type" : "MIT"
+    , "url" : "http://github.com/maimedleech/toddick/raw/master/LICENSE"
+    }
+  ]
+, "devDependencies" : 
+  { "nodeunit" : ">=0.5.1" 
+  , "coffeescript" : ">=1.0.0"
+  }
+, "directories" : { "lib": "./lib", "doc" : "./doc" }
+, "main" : "./lib/toddick.js"
+}
