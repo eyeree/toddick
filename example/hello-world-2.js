@@ -5,10 +5,10 @@ var timer = require('toddick/lib/timer');
 exports.Hello = toddick(
   {
 
-    initialize: function () {
+    init: function () {
       this.state.count = 5;
       this.state.distributor = this.link(new dispatch.Distributor('greeter'));
-      this.link(new timer.Repeater(this.self.greet, 2000));
+      this.link(new timer.Interval(2000, this.self.greet));
     },
 
     greet: function () {
@@ -26,8 +26,8 @@ exports.Hello = toddick(
 exports.World = toddick(
   {
 
-    initialize: function() {
-      this.monitor(new dispatch.Receiver(this.self.greeting, 'greeter'));
+    init: function() {
+      this.monitor(new dispatch.Receiver('greeter', this.self.greeting));
     },
     
     greeting: function(greeting) {
@@ -44,5 +44,5 @@ toddick.register( module );
 var hw2 = require('toddick/example/hello-world-2');
 
 new hw2.Hello();
-new hw2.Wolrd();
+new hw2.World();
 new hw2.World();

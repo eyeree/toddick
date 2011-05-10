@@ -400,7 +400,7 @@ exports.monitor_inactive_sends_msg = function(test) {
   
 }
 
-exports.link_exits_both = function(test) {
+exports.link_exits_source = function(test) {
   
   test.expect(0);
   
@@ -425,5 +425,261 @@ exports.link_exits_both = function(test) {
   var instance_1 = new constructor_1();
   var instance_2 = new constructor_2(instance_1);
   
+}
+
+
+exports.link_exits_target = function(test) {
+  
+  test.expect(0);
+  
+  var constructor_1 = toddick(
+    {
+      exit: function(reason) {
+        this.exit(reason);
+        test.done();
+      }
+    }
+  );
+  
+  var constructor_2 = toddick(
+    {
+      init: function(target) {
+        this.link(target);
+        this.exit();
+      }
+    }
+  );
+  
+  var instance_1 = new constructor_1();
+  var instance_2 = new constructor_2(instance_1);
+  
+}
+
+exports.exit_in_init_exits = function(test) {
+ 
+  test.expect(1);
+   
+  var constructor = toddick(
+    {
+      init: function() {
+        this.exit();
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+  process.nextTick(
+    function() {
+      test.ok(!instance.is_active);
+      test.done();
+    }
+  );
+  
+}
+
+exports.register_registers = function(test) {
+  
+  test.expect(5);
+  
+  var constructor = toddick(
+    {
+      init: function() {
+        
+        this.register('a');
+        
+        test.deepEqual(instance, toddick.tryFind('a'));
+        test.deepEqual(instance, toddick.tryFind('b'));
+        test.deepEqual(instance, toddick.find('a'));
+        test.deepEqual(instance, this.find('a'));
+        test.deepEqual(instance, this.tryFind('a'));
+        
+        test.done();
+  
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+  instance.register('b');
+  
+}
+
+exports.exit_unregisters = function(test) {
+  
+  test.expect(2);
+  
+  var constructor = toddick(
+    {
+    }
+  );
+  
+  var instance = new constructor();
+  
+  instance.register('c');
+  
+  instance.exit();
+  
+  process.nextTick(
+    function() {
+      test.equal(undefined, toddick.tryFind('c'));
+      try {
+        toddick.find('c');
+      } catch(e) {
+        test.ok(true);
+      }
+      test.done();
+    }
+  );
+  
+}
+
+exports.unregister_unregisters = function(test) {
+  
+  test.expect(4);
+  
+  var constructor = toddick(
+    {
+      init: function() {
+        
+        this.register('d');
+        
+        test.deepEqual(instance, toddick.tryFind('d'));
+        test.deepEqual(instance, toddick.tryFind('e'));
+        
+        this.unregister('e');
+        instance.unregister('d');
+        
+        test.equal(undefined, toddick.tryFind('d'));
+        test.equal(undefined, toddick.tryFind('e'));
+        
+        this.exit();
+  
+        test.done();
+        
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+  instance.register('e');
+  
+}
+
+exports.unmonitor_with_name_unmonitors = function(test) {
+  
+  test.expect(1);
+  
+  var constructor_1 = toddick(
+    {
+      init: function() {
+        this.register('f');
+      }
+    }
+  );
+  
+  var constructor_2 = toddick(
+    {
+      init: function() {
+        this.state.target = this.monitor('f');
+        test.deepEqual(this.state.target, instance_1);
+        this.self.msg1();
+      },
+      
+      msg1: function() {
+        this.unmonitor('f');
+        this.state.target.exit();
+        this.self.msg2();
+      },
+      
+      msg2: function() {
+        this.self.msg3();
+      },
+      
+      msg3: function() {
+        test.done();
+      },
+      
+      exit: function() {
+        test.ok(false);
+      }
+    }
+  );
+  
+  var instance_1 = new constructor_1();
+  var instance_2 = new constructor_2();
+      
+}
+
+exports.monitor_with_name_monitors = function(test) {
+  
+  test.expect(1);
+  
+  var constructor_1 = toddick(
+    {
+      init: function() {
+        this.register('g');
+      }
+    }
+  );
+  
+  var constructor_2 = toddick(
+    {
+      init: function() {
+        this.state.target = this.monitor('g');
+        test.deepEqual(this.state.target, instance_1);
+        this.self.msg1();
+      },
+      
+      msg1: function() {
+        this.state.target.exit();
+      },
+      
+      exit: function() {
+        test.done();
+      }
+    }
+  );
+  
+  var instance_1 = new constructor_1();
+  var instance_2 = new constructor_2();
+      
+}
+
+exports.link_with_name_links = function(test) {
+  
+  test.expect(1);
+  
+  var constructor_1 = toddick(
+    {
+      init: function() {
+        this.register('h');
+      }
+    }
+  );
+  
+  var constructor_2 = toddick(
+    {
+      init: function() {
+        this.state.target = this.link('h');
+        test.deepEqual(this.state.target, instance_1);
+        this.self.msg1();
+      },
+      
+      msg1: function() {
+        this.state.target.exit();
+      },
+      
+      exit: function() {
+        test.done();
+      }
+    }
+  );
+  
+  var instance_1 = new constructor_1();
+  var instance_2 = new constructor_2();
+      
 }
 
