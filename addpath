@@ -1,3 +1,0 @@
-DIR=$(cd `dirname $BASH_SOURCE` && pwd)/node_modules/.bin
-export PATH=$DIR:$PATH
-echo Added: $DIR
