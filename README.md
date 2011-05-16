@@ -35,7 +35,7 @@ focused toddicks cooperating to perform complex tasks.
 Next steps:
 
  * [Getting Started](https://github.com/maimedleech/toddick/wiki/Getting-Started)
- * [Reference Manual](https://github.com/maimedleech/toddick/wiki/User-Guide)
+ * [User Guide](https://github.com/maimedleech/toddick/wiki/User-Guide)
 
 
 [node.js]: http://nodejs.org
