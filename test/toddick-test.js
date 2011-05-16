@@ -42,18 +42,34 @@ exports.toddick_id_is_unique_for_type = function(test) {
   test.done();
 }
 
-exports.register_sets_type_name = function(test) {
+exports.toddick_uses_name_for_trace_name = function(test) {
   test.expect(1);
-  var constructor = toddick( {} );
+  var constructor = toddick( 'Test', {} );
+  var instance = new constructor();
+  test.ok(/^Test:\d+$/, instance.id);
+  test.done();
+}
+
+exports.toddick_uses_name_and_module_for_trace_name = function(test) {
+  test.expect(1);
   var mock_mod = {
     filename: '/test/filename.ext',
-    exports: {
-      Test: constructor
-    }
+    exports: { }
   };
-  toddick.register(mock_mod);
+  var constructor = toddick( 'Test', mock_mod, {} );
   var instance = new constructor();
   test.ok(/^filename.Test:\d+$/, instance.id);
+  test.done();
+}
+
+exports.toddick_exports_constructor = function(test) {
+  test.expect(1);
+  var mock_mod = {
+    filename: '/test/filename.ext',
+    exports: { }
+  };
+  var constructor = toddick( 'Test', mock_mod, {} );
+  test.deepEqual(mock_mod.exports['Test'], constructor);
   test.done();
 }
 

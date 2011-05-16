@@ -1,0 +1,552 @@
+<!DOCTYPE html>  <html> <head>   <title>toddick.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               toddick.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">                              <p>Core toddick functionality</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">                              <p>Node modules we use.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">                              <p>Toddick modules we use.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">registry</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./registry&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">                              <p>Every toddick instance gets an id that includes an unique number.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">next_toddick_ordinal</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">                              <h2>Function: toddick</h2>
+
+<p>Creates a toddick constructor.</p>
+
+<pre><code>constructor = toddick( [export_name [, export_module ] , ] handlers )
+</code></pre>
+
+<p><em>export_name</em> - name used for exported toddick class and in trace output</p>
+
+<p><em>export_module</em> - module that is exporting the toddick class</p>
+
+<p><em>handlers</em> - an object whose properties are message handler functions</p>
+
+<p><em>constructor</em> - returns the constructor function.</p>
+
+<p>If export_module is provided, the constructor is added to the module exports.</p>
+
+<p>This function is available as the value returned by require('toddick');</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">export_name</span><span class="p">,</span> <span class="nx">export_module</span><span class="p">,</span> <span class="nx">handlers</span> <span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">                              <p>The export_module parameter is optional.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">handlers</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">handlers</span> <span class="o">=</span> <span class="nx">export_module</span><span class="p">;</span>
+    <span class="nx">export_module</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+  <span class="p">}</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">                              <p>The export_name parameter is optional.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">handlers</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">handlers</span> <span class="o">=</span> <span class="nx">export_name</span><span class="p">;</span>
+    <span class="nx">export_name</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">                              <p>Name used in trace output.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">trace_name</span> <span class="o">=</span> <span class="nx">export_name</span> <span class="o">||</span> <span class="s1">&#39;toddick&#39;</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">                              <p>Override the default trace_name if we can.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">export_name</span> <span class="o">&amp;&amp;</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">trace_name</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">.</span><span class="nx">makeTraceName</span><span class="p">(</span><span class="nx">export_name</span><span class="p">,</span> <span class="nx">export_module</span><span class="p">);</span>
+  <span class="p">}</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">                              <h3>Function: Toddick Constructor</h3>
+
+<p>Constructor returned by toddick function.</p>
+
+<pre><code>instance = new constructor( [ args ] )
+</code></pre>
+
+<p><em>args</em> - passed to init message handler</p>
+
+<p><em>instance</em> - the toddick object.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">constructor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">                              <h4>external_this and internal_this</h4>
+
+<p>A toddick is represented by two different objects in two distinct contexts. </p>
+
+<p>The "external" object is returned by the constructor. It's properties include all the 
+message dispatch functions (the ones that use process.nextTick to call the handler functions
+async) and a few other things.</p>
+
+<p>The "internal" object is passed to the handler functions. It's properties include functions
+that allow the toddick to interact with the framework.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">external_this</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>             
+    <span class="kd">var</span> <span class="nx">internal_this</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">                              <h4>private data</h4>
+
+<p>The private data maintained by the framework for the toddick is kept in the constructor
+function's closure as local variables.</p>             </td>             <td class="code">               <div class="highlight"><pre>    </pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">                              <p>The toddick's unique id.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">toddick_id</span> <span class="o">=</span> <span class="nx">trace_name</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">next_toddick_ordinal</span><span class="o">++</span><span class="p">;</span>  
+    </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">                              <p>A place for the toddick to store it's state.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">                              <p>Tracks the toddicks monitoring this toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">monitors</span> <span class="o">=</span> <span class="p">{};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">                              <p>Tracks the toddicks this toddick is monitoring.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">monitoring</span> <span class="o">=</span> <span class="p">{};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">                              <p>Indicates if this toddick is active or if it has exited.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">is_active</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">                              <p>The value passed to this.exit will be saved here.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">exit_reason</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">                              <p>Tracks the global names assigned to this toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">registrations</span> <span class="o">=</span> <span class="p">{};</span>       
+    </pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">                              <h4>Property: self</h4>
+
+<p>An alias for the toddick's external object.</p>
+
+<p>This property is available as this.self inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">self</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">                              <h4>Function: this.trace</h4>
+
+<p>Writes a trace message to the toddick log.</p>
+
+<pre><code>this.trace( action [, data ] )
+</code></pre>
+
+<p><em>action</em> - A string describing the activity being logged.</p>
+
+<p><em>data</em> - An optional object that is written to the log as a JSON string.</p>
+
+<p>This function is available as this.trace inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">||</span> <span class="nx">constructor</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">||</span> <span class="nx">external_this</span><span class="p">.</span><span class="nx">trace_enabled</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="nx">toddick_id</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">                              <h4>Function: this.info</h4>
+
+<p>Writes an informational message to the toddick log.</p>
+
+<pre><code>this.info( action [, data ] )
+</code></pre>
+
+<p><em>action</em> - A string describing the activity being logged.</p>
+
+<p><em>data</em> - An optional object that is written to the log as a JSON string.</p>
+
+<p>This function is available as this.info inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">toddick_id</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">                              <h4>Function: this.error</h4>
+
+<p>Writes an error message to the toddick log.</p>
+
+<pre><code>this.error( action [, data ] )
+</code></pre>
+
+<p><em>action</em> - A string describing the activity being logged.</p>
+
+<p><em>data</em> - An optional object that is written to the log as a JSON string.</p>
+
+<p>This function is available as this.error inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">toddick_id</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">                              <h3>Function: this.exit</h3>
+
+<p>Makes the toddick inactive.</p>
+
+<pre><code>this.exit( [ reason ] )
+</code></pre>
+
+<p><em>reason</em> - An optional value indicating why the toddick is exiting.</p>
+
+<p>This function is available as this.exit inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">exit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+      
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;exiting&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">reason</span><span class="o">:</span> <span class="nx">reason</span><span class="p">,</span>  <span class="nx">monitoring</span><span class="o">:</span> <span class="nx">monitoring</span><span class="p">,</span> <span class="nx">monitors</span><span class="o">:</span> <span class="nx">monitors</span><span class="p">});</span>
+      
+      <span class="nx">is_active</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="nx">exit_reason</span> <span class="o">=</span> <span class="nx">reason</span><span class="p">;</span>
+      
+      <span class="kd">var</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">                              <p>Unregister registered names.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">registrations</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">registry</span><span class="p">.</span><span class="nx">unregister</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+      <span class="p">}</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">                              <p>Tell toddicks being monitored they are no longer being monitored.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">monitoring</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">=</span> <span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="nx">value</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">removeMonitor</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">msg</span><span class="p">);</span>
+      <span class="p">}</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">                              <p>Tell monitoring toddicks this toddick is exiting.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">monitors</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">=</span> <span class="nx">monitors</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="nx">value</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">self</span><span class="p">.</span><span class="nx">exitedMonitor</span><span class="p">(</span><span class="nx">external_this</span><span class="p">,</span> <span class="nx">value</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">value</span><span class="p">.</span><span class="nx">args</span><span class="p">);</span>
+      <span class="p">}</span>
+      
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">                              <h4>Function: this.link</h4>
+
+<p>Causes both toddicks to exit when either exits.</p>
+
+<pre><code>instance = this.link( target )
+</code></pre>
+
+<p><em>target</em> - The toddick that will be linked to this toddick. Can be an object or a registered
+name.</p>
+
+<p><em>instance</em> - Returns the linked toddick instance. Useful when target is a name.</p>
+
+<p>This function is available as this.link inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">link</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">                              <p>Find toddick with name.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">target</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+      <span class="p">}</span>
+      
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;link&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">                              <p>Set bi-directional monitors.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+      <span class="nx">external_this</span><span class="p">.</span><span class="nx">addMonitor</span><span class="p">(</span><span class="nx">target</span><span class="p">.</span><span class="nx">exit</span><span class="p">);</span>
+      
+      <span class="k">return</span> <span class="nx">target</span><span class="p">;</span>
+      
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">                              <h4>Function: this.monitor</h4>
+
+<p>Causes a message to be sent when the target toddick exits.</p>
+
+<pre><code>instance = this.monitor( target [, msg [, args ] ] )
+</code></pre>
+
+<p><em>target</em> - the toddick that will be linked to this toddick. Can be a registered name.</p>
+
+<p><em>msg</em> - the message to send. Default is external_this.exit.</p>
+
+<p><em>args</em> - an array of arguments to send with the message.</p>
+
+<p><em>instance</em> - Returns the monitored toddick instance. Useful when target is a name.</p>
+
+<p>This function is available as this.monitor inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">monitor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">                              <p>Find toddick with name.      </p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">target</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+      <span class="p">}</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">                              <p>Use external_this.exit as default message.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">;</span>
+        <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; exited&#39;</span><span class="p">];</span>
+      <span class="p">}</span>
+      
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;monitor&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span><span class="p">});</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">                              <p>Remember the toddicks we are monitoring.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+      <span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span><span class="p">};</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">                              <p>Tell the toddick to inform us when it exits.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">target</span><span class="p">.</span><span class="nx">addMonitor</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+      
+      <span class="k">return</span> <span class="nx">target</span><span class="p">;</span>
+      
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">                              <h4>Function: this.unmonitor</h4>
+
+<p>Stops monitoring previously started using this.monitor.</p>
+
+<pre><code>this.unmonitor( target [, msg ] )
+</code></pre>
+
+<p><em>target</em> - the toddick to stop monitoring. Can be a registered name.</p>
+
+<p><em>msg</em> - the monitor message to remove. Default is external_this.exit.</p>
+
+<p>This function is available as this.unmonitor inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">unmonitor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">                              <p>Find toddick with name.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">target</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+      <span class="p">}</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">                              <p>Use external_this.exit as default message.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;unmonitor&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">                              <p>No longer monitoring the toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">deleted</span> <span class="o">=</span> <span class="k">delete</span> <span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">                              <p>Tell toddick it is no longer being monitored.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="nx">deleted</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">target</span><span class="p">.</span><span class="nx">removeMonitor</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+      <span class="p">}</span>
+      
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">                              <h4>Function: this.register</h4>
+
+<p>Registers toddick by name. Throws if name already taken.</p>
+
+<pre><code>this.register( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p>This function is available as this.register inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">registry</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">external_this</span><span class="p">);</span> 
+      <span class="nx">registrations</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;registered&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">});</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-42">             <td class="docs">                              <h4>Function: this.unregister</h4>
+
+<p>Unregisters a toddick. Throws if not registered.</p>
+
+<pre><code>this.unregister( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p>This function is available as this.unregister inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">unregister</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">registrations</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Toddick &#39;</span> <span class="o">+</span> <span class="nx">toddick_id</span> <span class="o">+</span> <span class="s1">&#39; is not registered using name &quot;&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;&quot;.&#39;</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">registry</span><span class="p">.</span><span class="nx">unregister</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+      <span class="k">delete</span> <span class="nx">registrations</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;unregistered&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">});</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-43">             <td class="docs">                              <h4>Function this.find</h4>
+
+<p>Returns a registered toddick. Throws if not found. </p>
+
+<pre><code>instance = this.find( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p><em>instance</em> - Returns the registered toddick instance. </p>
+
+<p>This function is available as this.find inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+      <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-44">             <td class="docs">                              <h4>Function: this.tryFind</h4>
+
+<p>Returns a registered toddick or undefined if not found.</p>
+
+<pre><code>instance = this.tryFind( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p>This function is available as this.tryFind inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">tryFind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">tryFind</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+      <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-45">             <td class="docs">                              <h4>Property: this.state</h4>
+
+<p>An object where the toddick can store it's state.</p>
+
+<p>This property is available as this.state inside message handler functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">__defineGetter__</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-46">             <td class="docs">                              <h4>Function: <em>instance</em>.register</h4>
+
+<p>Registers toddick by name. Throws if name already taken.</p>
+
+<pre><code>instance.register( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p>This function is available and as <em>instance</em>.register on a toddick instance object as 
+returned by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="nx">internal_this</span><span class="p">.</span><span class="nx">register</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-47">             <td class="docs">                              <h4>Function: <em>instance</em>.unregister</h4>
+
+<p>Unregisters a toddick. Throws if not registered.</p>
+
+<pre><code>this.unregister( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p>This function is available and as <em>instance</em>.unregister on a toddick instance object as 
+returned by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">unregister</span> <span class="o">=</span> <span class="nx">internal_this</span><span class="p">.</span><span class="nx">unregister</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-48">             <td class="docs">                              <h4>Property: <em>instance</em>.is_toddick</h4>
+
+<p>Exists and is true for all toddick objects.</p>
+
+<p>This property is available as <em>instance</em>.is_toddick on a toddick instance object as returned
+by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">__defineGetter__</span><span class="p">(</span><span class="s1">&#39;is_toddick&#39;</span><span class="p">,</span>
+      <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+     </pre></div>             </td>           </tr>                               <tr id="section-49">             <td class="docs">                              <h4>Property: <em>instance</em>.id</h4>
+
+<p>The toddick's unique id.</p>
+
+<p>This property is available as <em>instance</em>.id on a toddick instance object as returned by a
+toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">__defineGetter__</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">toddick_id</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">                              <h4>Property: <em>instance</em>.is_active</h4>
+
+<p>Indicates if the toddick is active or if it has exited.</p>
+
+<p>This property is available as <em>instance</em>.is_active on a toddick instance object as returned
+by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">__defineGetter__</span><span class="p">(</span><span class="s1">&#39;is_active&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">is_active</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">                              <h4>Property: <em>instance</em>.exit_reason</h4>
+
+<p>After the toddick has exited, this property contains the value passed to the exit function.</p>
+
+<p>This property is available as <em>instance</em>.exit_reason on a toddick instance object as
+returned by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">__defineGetter__</span><span class="p">(</span><span class="s1">&#39;exit_reason&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">exit_reason</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-52">             <td class="docs">                              <h4>Property: <em>instance</em>.trace_enabled</h4>
+
+<p>Enables tracing for a toddick.</p>
+
+<p>This property is available as <em>instance</em>.trace_enabled on a toddick object as returned by
+a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-53">             <td class="docs">                              <h4>Function: createDispatcher</h4>
+
+<p>Builds a dispatch function.</p>
+
+<pre><code>createDispatcher( handler_name, handler [, inactive_handler ] )
+</code></pre>
+
+<p><em>message_name</em> - the name of the message that will be dispatched.</p>
+
+<p><em>handler</em> - the message handler function to be called async by the dispatcher.</p>
+
+<p><em>inactive_handler</em> - the handler that is called if the toddick is incative. </p>
+
+<p>This is an internal framework function.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">createDispatcher</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">message_name</span><span class="p">,</span> <span class="nx">handler</span><span class="p">,</span> <span class="nx">inactive_handler</span><span class="p">)</span> <span class="p">{</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-54">             <td class="docs">                              <h5>Function: handler_wrapper</h5>
+
+<p>Wraps a message handler callback with error handling code.</p>
+
+<pre><code>handler_wrapper( args )
+</code></pre>
+
+<p><em>args</em> - An array of arguments that will be passed to the handler.</p>
+
+<p>This is an internal framework function.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">handler_wrapper</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        
+        <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;received&#39;</span><span class="p">,</span> 
+          <span class="p">{</span>
+            <span class="nx">message</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
+            <span class="nx">arguments</span><span class="o">:</span> <span class="nx">args</span><span class="p">,</span> 
+            <span class="nx">is_active</span><span class="o">:</span> <span class="nx">is_active</span>
+          <span class="p">}</span>
+        <span class="p">);</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nx">is_active</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">internal_this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+          <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">exception</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">internal_this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;handler-error&#39;</span><span class="p">,</span> 
+              <span class="p">{</span>
+                <span class="nx">message</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
+                <span class="nx">arguments</span><span class="o">:</span> <span class="nx">args</span><span class="p">,</span>
+                <span class="nx">exception</span><span class="o">:</span> <span class="nx">exception</span>
+              <span class="p">}</span>
+            <span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">message_name</span> <span class="o">===</span> <span class="s1">&#39;exit&#39;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">internal_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;Error occured in exit handler. &#39;</span> <span class="o">+</span> <span class="nx">exception</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="nx">external_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">.</span><span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">internal_this</span><span class="p">,</span> <span class="p">[[</span><span class="nx">exception</span><span class="p">]]);</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">inactive_handler</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">inactive_handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">internal_this</span><span class="p">,</span> <span class="nx">saved_arguments</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+        
+      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-55">             <td class="docs">                              <h5>Function: <em>instance</em>.<em>dispatcher</em></h5>
+
+<p>The dispatcher function that will be returned.</p>
+
+<pre><code>instance.dispatcher( [ args... ] )
+</code></pre>
+
+<p><em>args</em> -- arguments passed to handler function.</p>
+
+<p>This function is available as <em>instance</em>.<em>message_name</em> on a toddick instance object as
+returned by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">dispatcher</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">saved_arguments</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(</span>
+          <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">handler_wrapper</span><span class="p">(</span><span class="nx">saved_arguments</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">);</span>
+      <span class="p">};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-56">             <td class="docs">                              <h5>Property: <em>instance</em>.<em>dispatcher</em>.id</h5>
+
+<p>An unique id for the dispatcher instance. The id is unique even among toddicks of the same
+type.</p>
+
+<p>This property is available  as <em>instance</em>.<em>message_name</em>.id on a toddick object.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">toddick_id</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">handler_name</span><span class="p">;</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-57">             <td class="docs">                              <h5>Property: <em>instance</em>.<em>dispatcher</em>.self</h5>
+
+<p>An the toddick that will receive messages sent via the dispatcher.</p>
+
+<p>This property is available  as <em>instance</em>.<em>message_name</em>.self on a toddick object.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">self</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">;</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-58">             <td class="docs">                              <h5>Function: <em>instance</em>.<em>dispatcher</em>.handler</h5>
+
+<p>Calls the handler synchronously with error handling.</p>
+
+<pre><code>instance.dispatcher.handler( [ args ] )
+</code></pre>
+
+<p><em>args</em> - An array of arguments that will be passed to the handler.</p>
+
+<p>This is an internal framework function.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">handler</span> <span class="o">=</span> <span class="nx">handler_wrapper</span><span class="p">;</span>
+      
+      <span class="k">return</span> <span class="nx">dispatcher</span><span class="p">;</span>
+      
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-59">             <td class="docs">                              <h4>Constructor Body</h4>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-60">             <td class="docs">                              <p>Create Dispatcher Functions</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">handler_name</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="nx">handler_name</span> <span class="k">in</span> <span class="nx">handlers</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">external_this</span><span class="p">[</span><span class="nx">handler_name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">createDispatcher</span><span class="p">(</span><span class="nx">handler_name</span><span class="p">,</span> <span class="nx">handlers</span><span class="p">[</span><span class="nx">handler_name</span><span class="p">]);</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-61">             <td class="docs">                              <p>Create the default exit message dispatcher. Toddick can override.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">external_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">external_this</span><span class="p">.</span><span class="nx">exit</span> <span class="o">=</span> <span class="nx">createDispatcher</span><span class="p">(</span><span class="s1">&#39;exit&#39;</span><span class="p">,</span> 
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="nx">reason</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">);</span>
+    <span class="p">}</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-62">             <td class="docs">                              <p>Create addMonitor dispatcher. Toddick cannot override.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">addMonitor</span> <span class="o">=</span> <span class="nx">createDispatcher</span><span class="p">(</span><span class="s1">&#39;addMonitor&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// when active</span>
+        <span class="nx">monitors</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span><span class="p">};</span>
+      <span class="p">},</span>
+      <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// when inactive</span>
+        <span class="nx">msg</span><span class="p">.</span><span class="nx">self</span><span class="p">.</span><span class="nx">exitedMonitor</span><span class="p">(</span><span class="nx">external_this</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-63">             <td class="docs">                              <p>Create removeMonitor dispatcher. Toddick cannot override.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">removeMonitor</span> <span class="o">=</span> <span class="nx">createDispatcher</span><span class="p">(</span><span class="s1">&#39;removeMonitor&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">delete</span> <span class="nx">monitors</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-64">             <td class="docs">                              <p>Create exitedMonitor dispatcher. Toddick cannot override.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">exitedMonitor</span> <span class="o">=</span> <span class="nx">createDispatcher</span><span class="p">(</span><span class="s1">&#39;exitedMonitor&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        <span class="k">delete</span> <span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="nx">msg</span><span class="p">.</span><span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[</span><span class="nx">args</span><span class="p">]);</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-65">             <td class="docs">                              <p>Send init message</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span><span class="p">(</span><span class="nx">external_this</span><span class="p">.</span><span class="nx">init</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">external_this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">external_this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;created&#39;</span><span class="p">);</span>
+    
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-66">             <td class="docs">                              <h3>Property: constructor.trace_enabled</h3>
+
+<p>Enables/disables tracing for all toddicks of this type.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-67">             <td class="docs">                              <h3>Property: constructor.is_toddick_constructor</h3>
+
+<p>Exists and is true on all toddick constructor functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">is_toddick_constructor</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-68">             <td class="docs">                              <p>Export the toddick type if we can</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">export_name</span> <span class="o">&amp;&amp;</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">export_module</span><span class="p">.</span><span class="nx">exports</span><span class="p">[</span><span class="nx">export_name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">constructor</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nx">constructor</span><span class="p">;</span>
+
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-69">             <td class="docs">                              <h2>Property: toddick.trace_enabled</h2>
+
+<p>Enables/disables tracing for all toddicks.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">=</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="s1">&#39;TODDICK_TRACE&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;enabled&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-70">             <td class="docs">                              <h2>Function: toddick.find</h2>
+
+<p>Returns a registered toddick. Throws if not found.</p>
+
+<pre><code>instance = toddick.find( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p><em>instance</em> - Returns the toddick instance object found.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">,</span> <span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-71">             <td class="docs">                              <h2>Function: toddick.tryFind</h2>
+
+<p>Returns a registered toddick or undefined if not found.</p>
+
+<pre><code>instance = toddick.tryFind( name )
+</code></pre>
+
+<p><em>name</em> - String that identifies the toddick.</p>
+
+<p><em>instance</em> - Returns the toddick instance object found.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">tryFind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">tryFind</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">,</span> <span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-72">             <td class="docs">                              <h2>Function: toddick.makeTraceName</h2>
+
+<p>Construct the name used in trace output for toddick of a given type.</p>
+
+<pre><code> name = toddick.makeTraceName( export_name, export_module )
+</code></pre>
+
+<p><em>export_module</em> - The module in which the toddick type is defined.</p>
+
+<p><em>export_name</em> - The name used to export the toddick type.</p>
+
+<p>Assign a new function to toddick.makeTraceName to change how trace names are generated.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">makeTraceName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">export_name</span><span class="p">,</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">module_name</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="nx">export_module</span><span class="p">.</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">export_module</span><span class="p">.</span><span class="nx">filename</span><span class="p">));</span>
+  <span class="k">return</span> <span class="nx">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">export_name</span><span class="p">;</span>
+<span class="p">}</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-73">             <td class="docs">                              <p>Export toddick function/object</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

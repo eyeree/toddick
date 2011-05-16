@@ -1,0 +1,72 @@
+<!DOCTYPE html>  <html> <head>   <title>dispatch.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               dispatch.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">                              <p>Dispatch messages to multiple subscribers.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./toddick&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">                              <h2>Toddick: Distributor</h2>
+
+<p>Allows data to be sent to a set of subscribers.</p>
+
+<pre><code>distributor = new dispatch.Distributor( name )
+</code></pre>
+
+<p><em>name</em> - The name the distributor will be registed using.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">(</span> <span class="s1">&#39;Distributor&#39;</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span>
+  <span class="p">{</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">                              <h3>Message: distributor.init</h3>
+
+<p>Initializes the toddick with arguments from the constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">subscriptions</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">                              <h3>Message: distributor.subscribe</h3>
+
+<p>Registers a message to be sent when distribute message is recieved.</p>
+
+<pre><code>ditributor.subscribe( msg )
+</code></pre>
+
+<p><em>msg</em> - The message that will be sent.</p>
+
+<p>The subscriber is automatically unsubscribed when it exits.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">subscriptions</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">self</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">,</span> <span class="p">[</span><span class="nx">msg</span><span class="p">]);</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">                              <h3>Message: distributor.unsubscribe</h3>
+
+<p>Deregisters a previsouly subscribed message.</p>
+
+<pre><code>ditributor.unsubscribe( msg )
+</code></pre>
+
+<p><em>msg</em> - The message to be unsubscribed.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">subscriptions</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">unmonitor</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">self</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">);</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">                              <h3>Message: distributor.distribute</h3>
+
+<p>Sends provided data to all subscribers.</p>
+
+<pre><code>ditributor.distribute( data )
+</code></pre>
+
+<p><em>data</em> - The data to send to all subscribers.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">distribute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">id</span><span class="p">;</span>
+      <span class="k">for</span><span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">subscriptions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">subscriptions</span><span class="p">[</span><span class="nx">id</span><span class="p">](</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+  <span class="p">}</span>
+<span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">                              <h2>Toddick: Receiver</h2>
+
+<p>Subscribes to messages from a Dispatcher.</p>
+
+<pre><code>receiver = new dispatch.Receiver( name, msg )
+</code></pre>
+
+<p><em>name</em> - The name used to register the dispatcher.
+<em>msg</em> - The message to be sent by the dispatcher.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">(</span> <span class="s1">&#39;Receiver&#39;</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span>
+  <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">                              <h3>Message: receiver.init</h3>
+
+<p>Initializes the toddick with arguments from the constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">distributor</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">link</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+      <span class="nx">distributor</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+  <span class="p">}</span>
+<span class="p">);</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
