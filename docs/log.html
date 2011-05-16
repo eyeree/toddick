@@ -1,0 +1,102 @@
+<!DOCTYPE html>  <html> <head>   <title>log.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               log.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">                              <p>Tracing and logging support functions.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">                              <h2>Property: log.stream</h2>
+
+<p>A writable stream to which toddick log output is be written. Set to a different
+writable stream to direct log output to a file.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">stream</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">stdout</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">                              <h2>Property: log.seperator</h2>
+
+<p>String used to seperate the log output fields. Default is a tab character. Assign a different
+string to change the field seperator.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">seperator</span> <span class="o">=</span> <span class="s2">&quot;\t&quot;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">                              <h2>Property: log.eol</h2>
+
+<p>String used at the end of a log line. Default is a newline character. Assign a different string
+to change the end of line marker.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">eol</span> <span class="o">=</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">                              <h2>Function: log.makeDataString</h2>
+
+<p>Serializes an object to a string for log output. Default uses JSON.stringify. Assign a different
+function to change the data output format.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">makeDataString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">data_string</span><span class="p">;</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">data</span> <span class="o">===</span> <span class="s2">&quot;undefined&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">data_string</span> <span class="o">=</span> <span class="s2">&quot;{}&quot;</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="nx">data_string</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">data_string</span> <span class="o">=</span> <span class="s2">&quot;(JSON.strigify failed: &quot;</span> <span class="o">+</span> <span class="nx">e</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">data_string</span><span class="p">;</span>
+
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">                              <h2>Function: log.makeTimeString</h2>
+
+<p>Creates the date/time string used in log output. Default uses Date.toUTCString. Assign a 
+different function to change the timestamp output format.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">makeTimeString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">date</span><span class="p">.</span><span class="nx">toUTCString</span><span class="p">();</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">                              <h2>Function: log.write</h2>
+
+<p>Writes log output. </p>
+
+<pre><code>log.output( type, entity, activity [ , data ] )
+</code></pre>
+
+<p><em>type</em> - indicates the type of log output, e.g. trace, info or error.</p>
+
+<p><em>entity</em> - a string identifing the entity that is doing the logging</p>
+
+<p><em>activity</em> - a string identifing the activity being logged</p>
+
+<p><em>data</em> - an object containing data to be included in the log output.</p>
+
+<p>The entity and activity values should be short strings. The details of the
+log output should be included in the data object. For example:</p>
+
+<pre><code>log.write(
+  "info", 
+  "my-module", 
+  "initializing", 
+  {
+    foo: some_param 
+    bar: some_other_param 
+  }
+);
+</code></pre>
+
+<p>A timestamp is included in the log output. It is generated using the log.makeLogTimeString 
+function.</p>
+
+<p>The data object is converted to a string using log.makeDataString.</p>
+
+<p>Fields are seperated by the log.seperator string. The output is terminated by the log.eol string.</p>
+
+<p>The log output is written to the log.stream stream.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">write</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">data_string</span> <span class="o">=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">makeDataString</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">time_string</span> <span class="o">=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">makeTimeString</span><span class="p">();</span>
+
+  <span class="kd">var</span> <span class="nx">entry</span> <span class="o">=</span>
+    <span class="nx">time_string</span> <span class="o">+</span> <span class="nx">log</span><span class="p">.</span><span class="nx">seperator</span> <span class="o">+</span> 
+    <span class="nx">type</span>        <span class="o">+</span> <span class="nx">log</span><span class="p">.</span><span class="nx">seperator</span> <span class="o">+</span> 
+    <span class="nx">entity</span>      <span class="o">+</span> <span class="nx">log</span><span class="p">.</span><span class="nx">seperator</span> <span class="o">+</span> 
+    <span class="nx">activity</span>    <span class="o">+</span> <span class="nx">log</span><span class="p">.</span><span class="nx">seperator</span> <span class="o">+</span> 
+    <span class="nx">data_string</span> <span class="o">+</span> <span class="nx">log</span><span class="p">.</span><span class="nx">eol</span><span class="p">;</span>
+
+  <span class="nx">log</span><span class="p">.</span><span class="nx">stream</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">                              <h2>Function: log.trace</h2>
+
+<p>Writes trace level log output. Calls toddick.log with "trace" for the type
+parameter.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">trace</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;trace&quot;</span><span class="p">,</span> <span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">                              <h2>Function: log.info</h2>
+
+<p>Writes information level log output. Calls toddick.log with "info" for the
+type parameter.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">                              <h2>Function: log.error</h2>
+
+<p>Writes error level log output. Calls toddick.log with "error" for the type
+parameter.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">log</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">entity</span><span class="p">,</span> <span class="nx">activity</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
