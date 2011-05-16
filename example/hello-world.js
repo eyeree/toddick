@@ -2,10 +2,12 @@ var toddick = require('toddick');
 
 var HelloWorld = toddick(
   {
-    init: function() {
+    sayHello: function() {
       console.log("hello world!");
     }
   }
 );
 
-new HelloWorld();
+var hello_world = new HelloWorld();
+
+hello_world.sayHello();

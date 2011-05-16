@@ -1,5 +1,5 @@
 { "name": "toddick"
-, "version": "0.1.0"
+, "version": "0.2.0"
 , "description": "An Erlang like framework for asynchronous programming in node.js."
 , "keywords": ["asynchronous", "concurrent", "actor", "erlang"]
 , "author":
@@ -19,7 +19,8 @@
   ]
 , "devDependencies" : 
   { "nodeunit" : ">=0.5.1"
+  , "docco"    : ">=0.3.0"
   }
-, "directories" : { "lib": "./lib", "doc" : "./doc" }
+, "directories" : { "lib": "./lib" }
 , "main" : "./lib/toddick.js"
 }

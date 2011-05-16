@@ -1,0 +1,4 @@
+# source this in bash to add node_modules/.bin to your path: "$ . addpath"
+DIR=$(cd `dirname $BASH_SOURCE` && pwd)
+export PATH=$DIR/node_modules/.bin:$PATH
+
