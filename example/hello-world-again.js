@@ -6,14 +6,14 @@ toddick.trace_enabled = true;
 
 var World = toddick('World',
   {
-    init: function () {
-      this.state.count = 3;
-      this.state.distributor = this.link(new dispatch.Distributor('greeter'));
-      this.link(new timer.Interval(1000, this.self.greet));
+    INIT: function () {
+      this.count = 3;
+      this.distributor = this.link(new dispatch.Distributor('greeter'));
+      this.link(new timer.Interval(1000, this.GREET));
     },
-    greet: function () {
-      if (this.state.count-- > 0) {
-        this.state.distributor.distribute('the world says hello!');
+    GREET: function () {
+      if (this.count-- > 0) {
+        this.distributor.DISTRIBUTE('the world says hello!');
       } else {
         this.exit();
       }
@@ -23,12 +23,12 @@ var World = toddick('World',
 
 var Person = toddick('Person',
   {
-    init: function(name) {
-      this.state.name = name;
-      this.link(new dispatch.Receiver('greeter', this.self.greeting));
+    INIT: function(name) {
+      this.name = name;
+      this.link(new dispatch.Receiver('greeter', this.GREETING));
     },
-    greeting: function(greeting) {
-      console.log(this.state.name + ", " + greeting);
+    GREETING: function(greeting) {
+      console.log(this.name + ", " + greeting);
     }
   }
 );

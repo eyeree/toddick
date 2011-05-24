@@ -1,5 +1,5 @@
 { "name": "toddick"
-, "version": "0.2.0"
+, "version": "0.3.0"
 , "description": "An Erlang like framework for asynchronous programming in node.js."
 , "keywords": ["asynchronous", "concurrent", "actor", "erlang"]
 , "author":

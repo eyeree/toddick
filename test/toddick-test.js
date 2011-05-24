@@ -81,7 +81,7 @@ exports.constructor_sends_initialize = function(test) {
   
   var constructor = toddick(
     {
-      init: function(a, b) {
+      INIT: function(a, b) {
         test.ok(was_async);
         test.equal(a, 'a');
         test.equal(b, 'b');
@@ -104,7 +104,7 @@ exports.constructor_creates_dispatcher = function(test) {
    
   var constructor = toddick( 
     {
-      msg: function(a, b) {
+      MSG: function(a, b) {
         test.equal(a, 'a');
         test.equal(b, 'b');
         test.ok(was_async);
@@ -115,7 +115,7 @@ exports.constructor_creates_dispatcher = function(test) {
   
   var instance = new constructor();
   
-  instance.msg('a', 'b');
+  instance.MSG('a', 'b');
    
   was_async = true;
    
@@ -127,15 +127,15 @@ exports.dispatcher_id_is_unique = function(test) {
   
   var constructor_a = toddick( 
     {
-      msg_a: function() {},
-      msg_b: function() {}
+      MSG_A: function() {},
+      MSG_B: function() {}
     }
   );
   
   var constructor_b = toddick( 
     {
-      msg_a: function() {},
-      msg_b: function() {}
+      MSG_A: function() {},
+      MSG_B: function() {}
     }
   );
   
@@ -144,22 +144,22 @@ exports.dispatcher_id_is_unique = function(test) {
   var instance_b_1 = new constructor_b();
   var instance_b_2 = new constructor_b();
   
-  test.ok(instance_a_1.msg_a.id);
-  test.ok(instance_a_1.msg_b.id);
-  test.ok(instance_a_2.msg_a.id);
-  test.ok(instance_a_2.msg_b.id);
-  test.ok(instance_b_1.msg_a.id);
-  test.ok(instance_b_1.msg_b.id);
-  test.ok(instance_b_2.msg_a.id);
-  test.ok(instance_b_2.msg_b.id);
+  test.ok(instance_a_1.MSG_A.id);
+  test.ok(instance_a_1.MSG_B.id);
+  test.ok(instance_a_2.MSG_A.id);
+  test.ok(instance_a_2.MSG_B.id);
+  test.ok(instance_b_1.MSG_A.id);
+  test.ok(instance_b_1.MSG_B.id);
+  test.ok(instance_b_2.MSG_A.id);
+  test.ok(instance_b_2.MSG_B.id);
   
-  test.notEqual(instance_a_1.msg_a.id, instance_a_1.msg_b.id);
-  test.notEqual(instance_a_1.msg_a.id, instance_a_2.msg_a.id);
-  test.notEqual(instance_a_1.msg_a.id, instance_a_2.msg_b.id);
-  test.notEqual(instance_a_1.msg_a.id, instance_b_1.msg_a.id);
-  test.notEqual(instance_a_1.msg_a.id, instance_b_1.msg_b.id);
-  test.notEqual(instance_a_1.msg_a.id, instance_b_2.msg_a.id);
-  test.notEqual(instance_a_1.msg_a.id, instance_b_2.msg_b.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_a_1.MSG_B.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_a_2.MSG_A.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_a_2.MSG_B.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_b_1.MSG_A.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_b_1.MSG_B.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_b_2.MSG_A.id);
+  test.notEqual(instance_a_1.MSG_A.id, instance_b_2.MSG_B.id);
   
   test.done();
   
@@ -171,7 +171,7 @@ exports.handler_self_is_toddick = function (test) {
   
   var constructor = toddick(
     {
-      init: function() {
+      INIT: function() {
         test.deepEqual(this.self, instance);
         test.done();
       }
@@ -182,42 +182,59 @@ exports.handler_self_is_toddick = function (test) {
   
 }
 
-exports.dispatcher_self_is_toddick = function (test) {
+exports.dispatcher_toddick_is_toddick = function (test) {
   
   test.expect(1);
   
   var constructor = toddick(
     {
-      msg: function() {}
+      MSG: function() {}
     }
   );
   
   var instance = new constructor();
   
-  test.deepEqual(instance.msg.self, instance);
+  test.deepEqual(instance.MSG.toddick, instance);
   test.done();
   
 }
 
-exports.state_is_preserved = function (test) {
+exports.this_is_preserved = function (test) {
   
   test.expect(1);
   
   var constructor = toddick(
     {
-      init: function() {
-        this.state.test = 1;
+      INIT: function() {
+        this.test = 1;
       },
       
-      msg: function() {
-        test.equal(this.state.test, 1);
+      MSG: function() {
+        test.equal(this.test, 1);
         test.done();
       }
     }
   );
   
   var instance = new constructor();
-  instance.msg();
+  instance.MSG();
+  
+}
+
+exports.this_is_not_toddick = function (test) {
+  
+  test.expect(1);
+  
+  var constructor = toddick(
+    {
+      INIT: function() {
+        test.notDeepEqual(this, this.self);
+        test.done();
+      }
+    }
+  );
+  
+  var instance = new constructor();
   
 }
 
@@ -227,7 +244,7 @@ exports.exit_makes_inactive = function (test) {
   
   var constructor = toddick(
     {
-      msg: function() {
+      MSG: function() {
         this.exit();
         test.ok(!instance.is_active);
         test.done();
@@ -239,7 +256,7 @@ exports.exit_makes_inactive = function (test) {
   
   test.ok(instance.is_active);
   
-  instance.msg();
+  instance.MSG();
   
 }
 
@@ -249,11 +266,11 @@ exports.messages_ignored_when_inactive = function (test) {
   
   var constructor = toddick(
     {
-      init: function() {
+      INIT: function() {
         this.exit();
       },
       
-      msg: function() {
+      MSG: function() {
         test.ok(false);
       }
     }
@@ -261,7 +278,7 @@ exports.messages_ignored_when_inactive = function (test) {
   
   var instance = new constructor();
   
-  instance.msg();
+  instance.MSG();
   
   process.nextTick(
     function () {
@@ -282,7 +299,7 @@ exports.has_exit_dispatcher = function(test) {
   
   var instance = new constructor();
   
-  instance.exit('test reason');
+  instance.EXIT('test reason');
   
   process.nextTick(
     function() {
@@ -301,10 +318,10 @@ exports.exception_sends_exit = function(test) {
   
   var constructor = toddick(
     {
-      msg: function() {
+      MSG: function() {
         throw error;
       },
-      exit: function(reason) {
+      EXIT: function(reason) {
         this.exit(reason);
         test.deepEqual(reason, error);
         test.done();
@@ -314,17 +331,17 @@ exports.exception_sends_exit = function(test) {
   
   var instance = new constructor();
   
-  instance.msg();
+  instance.MSG();
   
 }
 
 exports.monitor_sends_exit = function(test) {
-
+  
   test.expect(0);
   
   var constructor_1 = toddick(
     {
-      msg: function() {
+      MSG: function() {
         this.exit('test reason');
       }
     }
@@ -333,12 +350,12 @@ exports.monitor_sends_exit = function(test) {
   var constructor_2 = toddick(
     {
       
-      init: function(target) {
+      INIT: function(target) {
         this.monitor(target);
-        target.msg();
+        target.MSG();
       },
       
-      exit: function(reason) {
+      EXIT: function(reason) {
         this.exit(reason);
         test.done();
       }
@@ -353,11 +370,11 @@ exports.monitor_sends_exit = function(test) {
 
 exports.monitor_sends_msg = function(test) {
   
-  test.expect(2);
+  test.expect(0);
   
   var constructor_1 = toddick(
     {
-      msg: function() {
+      MSG: function() {
         this.exit('test reason');
       }
     }
@@ -366,14 +383,12 @@ exports.monitor_sends_msg = function(test) {
   var constructor_2 = toddick(
     {
       
-      init: function(target) {
-        this.monitor(target, this.self.msg, ['a', 'b']);
-        target.msg();
+      INIT: function(target) {
+        this.monitor(target, this.MSG);
+        target.MSG();
       },
       
-      msg: function(a, b) {
-        test.equal(a, 'a');
-        test.equal(b, 'b');
+      MSG: function(a, b) {
         test.done();
       }
       
@@ -391,7 +406,7 @@ exports.monitor_inactive_sends_msg = function(test) {
   
   var constructor_1 = toddick(
     {
-      init: function(target) {
+      INIT: function(target) {
         this.exit();
       }
     }
@@ -400,11 +415,11 @@ exports.monitor_inactive_sends_msg = function(test) {
   var constructor_2 = toddick(
     {
       
-      init: function(target) {
-        this.monitor(target, this.self.msg);
+      INIT: function(target) {
+        this.monitor(target, this.MSG);
       },
       
-      msg: function() {
+      MSG: function() {
         test.done();
       }
       
@@ -427,11 +442,11 @@ exports.link_exits_source = function(test) {
   
   var constructor_2 = toddick(
     {
-      init: function(target) {
+      INIT: function(target) {
         this.link(target);
-        target.exit('test reason');
+        target.EXIT('test reason');
       },
-      exit: function(reason) {
+      EXIT: function(reason) {
         this.exit(reason);
         test.done();
       }
@@ -450,7 +465,7 @@ exports.link_exits_target = function(test) {
   
   var constructor_1 = toddick(
     {
-      exit: function(reason) {
+      EXIT: function(reason) {
         this.exit(reason);
         test.done();
       }
@@ -459,7 +474,7 @@ exports.link_exits_target = function(test) {
   
   var constructor_2 = toddick(
     {
-      init: function(target) {
+      INIT: function(target) {
         this.link(target);
         this.exit();
       }
@@ -477,7 +492,7 @@ exports.exit_in_init_exits = function(test) {
    
   var constructor = toddick(
     {
-      init: function() {
+      INIT: function() {
         this.exit();
       }
     }
@@ -496,19 +511,17 @@ exports.exit_in_init_exits = function(test) {
 
 exports.register_registers = function(test) {
   
-  test.expect(5);
+  test.expect(3);
   
   var constructor = toddick(
     {
-      init: function() {
+      INIT: function() {
         
         this.register('a');
         
         test.deepEqual(instance, toddick.tryFind('a'));
         test.deepEqual(instance, toddick.tryFind('b'));
         test.deepEqual(instance, toddick.find('a'));
-        test.deepEqual(instance, this.find('a'));
-        test.deepEqual(instance, this.tryFind('a'));
         
         test.done();
   
@@ -535,7 +548,7 @@ exports.exit_unregisters = function(test) {
   
   instance.register('c');
   
-  instance.exit();
+  instance.EXIT();
   
   process.nextTick(
     function() {
@@ -557,7 +570,7 @@ exports.unregister_unregisters = function(test) {
   
   var constructor = toddick(
     {
-      init: function() {
+      INIT: function() {
         
         this.register('d');
         
@@ -590,7 +603,7 @@ exports.unmonitor_with_name_unmonitors = function(test) {
   
   var constructor_1 = toddick(
     {
-      init: function() {
+      INIT: function() {
         this.register('f');
       }
     }
@@ -598,27 +611,27 @@ exports.unmonitor_with_name_unmonitors = function(test) {
   
   var constructor_2 = toddick(
     {
-      init: function() {
-        this.state.target = this.monitor('f');
-        test.deepEqual(this.state.target, instance_1);
-        this.self.msg1();
+      INIT: function() {
+        this.target = this.monitor('f');
+        test.deepEqual(this.target, instance_1);
+        this.MSG1();
       },
       
-      msg1: function() {
+      MSG1: function() {
         this.unmonitor('f');
-        this.state.target.exit();
-        this.self.msg2();
+        this.target.EXIT();
+        this.MSG2();
       },
       
-      msg2: function() {
-        this.self.msg3();
+      MSG2: function() {
+        this.MSG3();
       },
       
-      msg3: function() {
+      MSG3: function() {
         test.done();
       },
       
-      exit: function() {
+      EXIT: function() {
         test.ok(false);
       }
     }
@@ -635,7 +648,7 @@ exports.monitor_with_name_monitors = function(test) {
   
   var constructor_1 = toddick(
     {
-      init: function() {
+      INIT: function() {
         this.register('g');
       }
     }
@@ -643,17 +656,17 @@ exports.monitor_with_name_monitors = function(test) {
   
   var constructor_2 = toddick(
     {
-      init: function() {
-        this.state.target = this.monitor('g');
-        test.deepEqual(this.state.target, instance_1);
-        this.self.msg1();
+      INIT: function() {
+        this.target = this.monitor('g');
+        test.deepEqual(this.target, instance_1);
+        this.MSG1();
       },
       
-      msg1: function() {
-        this.state.target.exit();
+      MSG1: function() {
+        this.target.EXIT();
       },
       
-      exit: function() {
+      EXIT: function() {
         test.done();
       }
     }
@@ -670,7 +683,7 @@ exports.link_with_name_links = function(test) {
   
   var constructor_1 = toddick(
     {
-      init: function() {
+      INIT: function() {
         this.register('h');
       }
     }
@@ -678,17 +691,17 @@ exports.link_with_name_links = function(test) {
   
   var constructor_2 = toddick(
     {
-      init: function() {
-        this.state.target = this.link('h');
-        test.deepEqual(this.state.target, instance_1);
-        this.self.msg1();
+      INIT: function() {
+        this.target = this.link('h');
+        test.deepEqual(this.target, instance_1);
+        this.MSG1();
       },
       
-      msg1: function() {
-        this.state.target.exit();
+      MSG1: function() {
+        this.target.EXIT();
       },
       
-      exit: function() {
+      EXIT: function() {
         test.done();
       }
     }
@@ -699,3 +712,26 @@ exports.link_with_name_links = function(test) {
       
 }
 
+exports.constructor_returns_self = function(test) {
+  
+  test.expect(1);
+  
+  var constructor = toddick(
+    {
+      MSG: function(instance) {
+        test.deepEqual(this.self, instance);
+        test.done();
+      }
+    }
+  );
+  
+  var instance = constructor();
+  
+  instance.MSG(instance);
+  
+}
+
+// TODO: 
+// link anonymous toddicks
+// preproc
+// withArgs

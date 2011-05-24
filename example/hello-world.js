@@ -2,7 +2,7 @@ var toddick = require('toddick');
 
 var HelloWorld = toddick(
   {
-    sayHello: function() {
+    SAY_HELLO: function() {
       console.log("hello world!");
     }
   }
@@ -10,4 +10,4 @@ var HelloWorld = toddick(
 
 var hello_world = new HelloWorld();
 
-hello_world.sayHello();
+hello_world.SAY_HELLO();

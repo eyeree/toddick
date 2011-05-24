@@ -8,8 +8,8 @@ JavaScript callbacks.
 Toddicks implement an [actor][] programming model with a framework similar to the one 
 provided by [Erlang][]. 
 
-The following is an example toddick. It produces output each time it receives an `sayHello` 
-message. The `hello_world.sayHello()` code asynchronously sends the `sayHello` message to the
+The following is an example toddick. It produces output each time it receives an `SAY_HELLO` 
+message. The `hello_world.SAY_HELLO()` code asynchronously sends the `SAY_HELLO` message to the
 toddick.
 
 ```js
@@ -17,15 +17,15 @@ var toddick = require('toddick');
 
 var HelloWorld = toddick(
   {
-    sayHello: function() {
-      console.log('hello world!');
+    SAY_HELLO: function() {
+      console.log('hello async world!');
     }
   }
 );
 
 var hello_world = new HelloWorld();
 
-hello_world.sayHello();   
+hello_world.SAY_HELLO();   // this call is async
 ```
 
 The word *toddick* means a very small quantity of something. The name is appropriate because 
