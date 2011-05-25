@@ -735,3 +735,101 @@ exports.constructor_returns_self = function(test) {
 // link anonymous toddicks
 // preproc
 // withArgs
+
+exports.link_creates_anonymous_toddick = function(test) {
+  
+  test.expect(0);
+  
+  var constructor = toddick(
+    {
+      INIT: function() {
+        this.link(
+          {
+            INIT: function() {
+              test.done();
+            }
+          }
+        );
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+}
+
+exports.preproc_calls_function_and_uses_args = function(test) {
+  
+  test.expect(2);
+  
+  var constructor = toddick(
+    {
+      INIT: function() {
+        var MSG2 = this.MSG.preproc('test',
+          function(args) {
+            test.equal(args[0], 'b');
+            return ['a'];
+          }
+        );
+        MSG2('b');
+      },
+      MSG: function(a) {
+        test.equal(a, 'a');
+        test.done();
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+}
+
+exports.preproc_calls_function_and_skips_handler = function(test) {
+  
+  test.expect(0);
+  
+  var constructor = toddick(
+    {
+      INIT: function() {
+        var MSG2 = this.MSG.preproc('test',
+          function(args) {
+            return undefined;
+          }
+        );
+        MSG2('b');
+        this.MSG3();
+      },
+      MSG: function(a) {
+        test.ok(false);
+      },
+      MSG3: function() {
+        test.done();
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+}
+
+exports.withArgs_calls_handler_with_args = function(test) {
+  
+  test.expect(2);
+  
+  var constructor = toddick(
+    {
+      INIT: function() {
+        var MSG2 = this.MSG.withArgs('a');
+        MSG2('b');
+      },
+      MSG: function(a, b) {
+        test.equal(a, 'a');
+        test.equal(b, 'b');
+        test.done();
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+}
