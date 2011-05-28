@@ -1,5 +1,5 @@
 var toddick = require('toddick');
-var remote = require('toddick/lib/remote');
+var remote = require('toddick/lib/remote/http');
 
 var PingPong = toddick(
   {
@@ -20,6 +20,6 @@ var Pinger = toddick(
   }
 );
 
-new remote.HttpMilieu(8910).PUBLISH("/pingpong", new PingPong());
+new remote.HttpPortal(8910).PUBLISH("/pingpong", new PingPong());
 
-new remote.HttpMilieu(8911).PROXY("http://localhost:8910/pingpong", new Pinger().PING);
+new remote.HttpPortal(8911).PROXY("http://localhost:8910/pingpong", new Pinger().PING);

@@ -4,7 +4,7 @@ var timer = require('toddick/lib/timer');
 
 toddick.trace_enabled = true;
 
-var World = toddick('World',
+var World = toddick('World', module,
   {
     INIT: function () {
       this.count = 3;
@@ -21,7 +21,7 @@ var World = toddick('World',
   }
 );
 
-var Person = toddick('Person',
+var Person = toddick('Person', module,
   {
     INIT: function(name) {
       this.name = name;
