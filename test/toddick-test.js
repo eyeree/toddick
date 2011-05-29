@@ -2,9 +2,6 @@ var toddick = require('../lib/toddick');
 var fs = require('fs');
 var log = require('../lib/log');
 
-toddick.trace_enabled = true;
-//log.stream = fs.createWriteStream('/dev/null');
-
 exports.toddick_returns_constructor = function(test) {
   test.expect(2);
   var constructor = toddick( {} );
