@@ -1,6 +1,9 @@
 var toddick = require('../lib/toddick');
+var fs = require('fs');
+var log = require('../lib/log');
 
-toddick.trace_enabled = false;
+toddick.trace_enabled = true;
+//log.stream = fs.createWriteStream('/dev/null');
 
 exports.toddick_returns_constructor = function(test) {
   test.expect(2);
@@ -245,9 +248,13 @@ exports.exit_makes_inactive = function (test) {
   var constructor = toddick(
     {
       MSG: function() {
+        process.nextTick(
+          function() {
+            test.ok(!instance.is_active);
+            test.done();
+          }
+        );
         this.exit();
-        test.ok(!instance.is_active);
-        test.done();
       }
     }
   );
@@ -290,7 +297,7 @@ exports.messages_ignored_when_inactive = function (test) {
 
 exports.has_exit_dispatcher = function(test) {
   
-  test.expect(1);
+  test.expect(3);
   
   var constructor = toddick(
     {
@@ -299,11 +306,13 @@ exports.has_exit_dispatcher = function(test) {
   
   var instance = new constructor();
   
-  instance.EXIT('test reason');
+  instance.EXIT('test reason', {test: 'data'});
   
   process.nextTick(
     function() {
       test.ok(!instance.is_active);
+      test.equal(instance.exit_reason, 'test reason');
+      test.equal(instance.exit_data.test, 'data');
       test.done();
     }
   );
@@ -312,7 +321,7 @@ exports.has_exit_dispatcher = function(test) {
   
 exports.exception_sends_exit = function(test) {
   
-  test.expect(1);
+  test.expect(2);
   
   var error = new Error('test exception');
   
@@ -321,10 +330,11 @@ exports.exception_sends_exit = function(test) {
       MSG: function() {
         throw error;
       },
-      EXIT: function(reason) {
-        this.exit(reason);
-        test.deepEqual(reason, error);
+      EXIT: function(reason, data) {
+        test.equal('handler-exception', reason);
+        test.deepEqual(data.exception, error);
         test.done();
+        this.exit(reason);
       }
     }
   );
@@ -337,12 +347,12 @@ exports.exception_sends_exit = function(test) {
 
 exports.monitor_sends_exit = function(test) {
   
-  test.expect(0);
+  test.expect(2);
   
   var constructor_1 = toddick(
     {
       MSG: function() {
-        this.exit('test reason');
+        this.exit('test reason', {test: 'data'});
       }
     }
   );
@@ -355,9 +365,11 @@ exports.monitor_sends_exit = function(test) {
         target.MSG();
       },
       
-      EXIT: function(reason) {
-        this.exit(reason);
+      EXIT: function(reason, data) {
+        test.equal('test reason', reason);
+        test.equal('data', data.test);
         test.done();
+        this.exit(reason, data);
       }
       
     }
@@ -370,12 +382,12 @@ exports.monitor_sends_exit = function(test) {
 
 exports.monitor_sends_msg = function(test) {
   
-  test.expect(0);
+  test.expect(2);
   
   var constructor_1 = toddick(
     {
       MSG: function() {
-        this.exit('test reason');
+        this.exit('test reason', {test: 'data'});
       }
     }
   );
@@ -388,7 +400,9 @@ exports.monitor_sends_msg = function(test) {
         target.MSG();
       },
       
-      MSG: function(a, b) {
+      MSG: function(reason, data) {
+        test.equal('test reason', reason);
+        test.equal('data', data.test);
         test.done();
       }
       
@@ -402,7 +416,7 @@ exports.monitor_sends_msg = function(test) {
 
 exports.monitor_inactive_sends_msg = function(test) {
   
-  test.expect(0);
+  test.expect(1);
   
   var constructor_1 = toddick(
     {
@@ -419,7 +433,8 @@ exports.monitor_inactive_sends_msg = function(test) {
         this.monitor(target, this.MSG);
       },
       
-      MSG: function() {
+      MSG: function(reason, data) {
+        test.equal(reason, 'already-exited');
         test.done();
       }
       
@@ -446,9 +461,9 @@ exports.link_exits_source = function(test) {
         this.link(target);
         target.EXIT('test reason');
       },
-      EXIT: function(reason) {
-        this.exit(reason);
+      EXIT: function(reason, data) {
         test.done();
+        this.exit(reason, data);
       }
     }
   );
@@ -465,9 +480,9 @@ exports.link_exits_target = function(test) {
   
   var constructor_1 = toddick(
     {
-      EXIT: function(reason) {
-        this.exit(reason);
+      EXIT: function(reason, data) {
         test.done();
+        this.exit(reason, data);
       }
     }
   );
@@ -583,8 +598,6 @@ exports.unregister_unregisters = function(test) {
         test.equal(undefined, toddick.tryFind('d'));
         test.equal(undefined, toddick.tryFind('e'));
         
-        this.exit();
-  
         test.done();
         
       }
@@ -833,3 +846,37 @@ exports.withArgs_calls_handler_with_args = function(test) {
   var instance = new constructor();
   
 }
+
+
+exports.exit_sets_exit_reason_and_data = function(test) {
+  
+  test.expect(3);
+
+  toddick.trace_enabled = true;
+    
+  var constructor = toddick(
+    {
+      INIT: function() {
+        this.exit('reason', {test: 'data'});
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+  process.nextTick(
+    function() {
+      process.nextTick(
+        function() {
+          test.equal(false, instance.is_active);
+          test.equal(instance.exit_reason, 'reason');
+          test.equal(instance.exit_data.test, 'data');
+          test.done();
+        }
+      );
+    }
+  );
+  
+  
+}
+
