@@ -1,0 +1,260 @@
+<!DOCTYPE html>  <html> <head>   <title>activity.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activity.html">                 activity.js               </a>                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="remote-http.html">                 remote-http.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                                           <a class="source" href="when.html">                 when.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               activity.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;toddick&#39;</span> <span class="p">);</span>
+<span class="kd">var</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;toddick/lib/timer&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">activity</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">;</span>
+
+<span class="nx">toddick</span><span class="p">(</span> <span class="s1">&#39;Supervisor&#39;</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span>
+  <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>default backoff</p>
+
+<p>10 * 4 ^ 0 =    10
+10 * 4 ^ 1 =    40
+10 * 4 ^ 2 =   160
+10 * 4 ^ 3 =   640
+10 * 4 ^ 4 =  2560
+10 * 4 ^ 5 = 10240
+10 * 4 ^ 6 = 40960</p>             </td>             <td class="code">               <div class="highlight"><pre>    
+    <span class="nx">INIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">config</span> <span class="p">)</span> <span class="p">{</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="k">typeof</span> <span class="nx">config</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="p">}</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="k">typeof</span> <span class="nx">config</span> <span class="o">!==</span> <span class="s1">&#39;object&#39;</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;bad-config&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;config is not an object&#39;</span> <span class="p">}</span> <span class="p">);</span>
+      <span class="p">}</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span> <span class="p">)</span> <span class="p">{</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span> <span class="o">!==</span> <span class="s1">&#39;function&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">is_toddick_constructor</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;bad-config&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;toddick property not a toddick constructor&#39;</span> <span class="p">}</span> <span class="p">);</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="p">;</span>
+        <span class="p">}</span>
+      
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="o">=</span> <span class="s1">&#39;exponential&#39;</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="p">;</span>
+        
+      <span class="p">}</span>
+      
+      <span class="k">switch</span><span class="p">(</span> <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">always</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="o">:</span>
+          <span class="k">break</span><span class="p">;</span>
+          
+        <span class="k">default</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;bad-config&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;invalid restart setting: &#39;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">}</span> <span class="p">);</span>
+          <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">activities</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      
+    <span class="p">},</span>
+    
+    <span class="nx">START</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      
+      <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="p">{</span> 
+        <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span><span class="o">++</span><span class="p">,</span>
+        <span class="nx">restart_count</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="p">};</span>
+      
+      <span class="nx">act</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">.</span><span class="nx">appendArgs</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">args</span><span class="p">,</span> <span class="nx">arguments</span> <span class="p">);</span>
+      
+      <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">construct</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">args</span> <span class="p">),</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">EXITED</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">)</span> 
+      <span class="p">);</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">self</span><span class="p">.</span><span class="nx">enable_trace</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">activity</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">Timeout</span><span class="p">(</span> 
+          <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span><span class="p">,</span> 
+          <span class="k">this</span><span class="p">.</span><span class="nx">RESET_RESTART_PERIOD</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">)</span>
+        <span class="p">);</span>
+      <span class="p">}</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">act</span><span class="p">;</span>
+      
+    <span class="p">},</span>
+    
+    <span class="nx">SUPERVISE</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">instance</span> <span class="p">)</span> <span class="p">{</span>
+      
+      <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">by</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+        <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span><span class="o">++</span><span class="p">,</span>
+        <span class="nx">instance</span><span class="o">:</span> <span class="nx">instance</span>
+      <span class="p">};</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">EXITED</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">)</span> <span class="p">);</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">act</span><span class="p">;</span>
+      
+    <span class="p">},</span>
+    
+    <span class="nx">EXITED</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
+      
+      <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act_id</span> <span class="p">];</span>
+      
+      <span class="kd">var</span> <span class="nx">restart</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      
+      <span class="k">switch</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
+        
+        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">always</span><span class="o">:</span>
+          <span class="nx">restart</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="k">break</span><span class="p">;</span>
+          
+        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="o">:</span>
+          <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">restart</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="k">break</span><span class="p">;</span>
+      
+        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="o">:</span>
+          <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> 
+              <span class="p">{</span> 
+                <span class="nx">instance</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">,</span>
+                <span class="nx">reason</span><span class="o">:</span>   <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span>     <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
+              <span class="p">}</span> 
+            <span class="p">);</span>
+          <span class="p">}</span>
+          <span class="k">break</span><span class="p">;</span>
+          
+      <span class="p">}</span>
+        
+      <span class="k">if</span><span class="p">(</span> <span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
+        
+        <span class="k">if</span><span class="p">(</span> 
+          <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span> 
+          <span class="o">&amp;&amp;</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">restart_count</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span>
+        <span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;restart-limit&#39;</span><span class="p">,</span> 
+            <span class="p">{</span> 
+              <span class="nx">instance</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">,</span>
+              <span class="nx">reason</span><span class="o">:</span>   <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
+              <span class="nx">data</span><span class="o">:</span>     <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
+            <span class="p">}</span> 
+          <span class="p">);</span>
+        <span class="p">}</span>
+      
+        <span class="kd">var</span> <span class="nx">delay</span> <span class="o">=</span> 
+          <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> 
+          <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span><span class="p">,</span> <span class="nx">act</span><span class="p">.</span><span class="nx">restart_count</span> <span class="p">);</span>
+          
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span> <span class="s1">&#39;activity-restart&#39;</span><span class="p">,</span> 
+          <span class="p">{</span> 
+            <span class="nx">instance</span><span class="o">:</span>      <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> 
+            <span class="nx">reason</span><span class="o">:</span>        <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span>          <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
+            <span class="nx">restart_count</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">restart_count</span><span class="p">,</span>
+            <span class="nx">delay</span><span class="o">:</span>         <span class="nx">delay</span>
+          <span class="p">}</span>
+        <span class="p">);</span>
+        
+        <span class="nx">act</span><span class="p">.</span><span class="nx">restart_timeout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">Timeout</span><span class="p">(</span> <span class="nx">delay</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">RESTART</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">)</span> <span class="p">);</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">self</span><span class="p">.</span><span class="nx">enable_trace</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">Timeout</span><span class="p">(</span> 
+            <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span><span class="p">,</span> 
+            <span class="k">this</span><span class="p">.</span><span class="nx">RESET_RESTART_PERIOD</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">)</span>
+          <span class="p">);</span>
+        <span class="p">}</span>
+        
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">();</span>
+          <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">];</span>
+        
+      <span class="p">}</span>
+      
+    <span class="p">},</span>
+    
+    <span class="nx">RESTART</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
+      
+      <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act_id</span> <span class="p">];</span>
+      
+      <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">construct</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">args</span> <span class="p">),</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">EXITED</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">)</span> 
+      <span class="p">);</span>
+      
+      <span class="nx">act</span><span class="p">.</span><span class="nx">restart_count</span><span class="o">++</span><span class="p">;</span>
+      
+      <span class="nx">act</span><span class="p">.</span><span class="nx">restart_timeout</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">();</span>
+      <span class="nx">act</span><span class="p">.</span><span class="nx">restart_timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      
+    <span class="p">},</span>
+    
+    <span class="nx">RESET_RESTART_PERIOD</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
+      
+      <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act_id</span> <span class="p">];</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="nx">act</span> <span class="o">&amp;&amp;</span> <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="p">)</span> <span class="p">{</span>
+        
+        <span class="nx">act</span><span class="p">.</span><span class="nx">restart_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        
+        <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">();</span>
+        <span class="nx">act</span><span class="p">.</span><span class="nx">restart_period_timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        
+      <span class="p">}</span>
+        
+    <span class="p">},</span>
+    
+    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
+      
+      <span class="k">for</span><span class="p">(</span> <span class="kd">var</span> <span class="nx">id</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">id</span> <span class="p">];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s2">&quot;activity&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+        <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">is_active</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s2">&quot;exiting&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+          <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">);</span>
+      
+    <span class="p">}</span>
+    
+  <span class="p">}</span>
+<span class="p">);</span>
+    
+   
+<span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">on_error</span><span class="o">:</span> <span class="s1">&#39;on-error&#39;</span><span class="p">,</span>
+  <span class="nx">always</span><span class="o">:</span>   <span class="s1">&#39;always&#39;</span><span class="p">,</span>
+  <span class="nx">never</span><span class="o">:</span>    <span class="s1">&#39;never&#39;</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
