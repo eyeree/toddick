@@ -1,5 +1,6 @@
 var toddick = require('../lib/toddick');
 var remote = require('../lib/remote-http');
+var activity = require('../lib/activity');
 var http = require('http');
 
 var test_port = 8910;
@@ -180,13 +181,9 @@ exports.client_does_post = function(test) {
 
 exports.portal_works = function(test) {
   
-  //remote.Portal.trace_enabled = true;
-  //toddick.trace_enabled = true;
-  
-  var p1;
-  var p2;
-  
   test.expect( 1 );
+  
+  var p1, p2;
   
   var PingPong = toddick(
     {
@@ -200,29 +197,62 @@ exports.portal_works = function(test) {
   var Pinger = toddick(
     {
       PING: function(pingpong) {
-        new require('../lib/timer').Timeout(10000, this.MSG.withArgs(pingpong));
-      },
-      
-      MSG: function(pingpong) {
         pingpong.PING(this.PONG);
-      },
-      
+      },     
       PONG: function() {
+        
+        p1.EXIT();
+        p2.EXIT();
+        
+        test.done();
+        
+      }
+    }
+  );
+  
+  p1 = new remote.Portal(8910);
+  p1.PUBLISH("/pingpong", new PingPong());
+
+  p2 = new remote.Portal(8911);
+  p2.PROXY("http://localhost:8910/pingpong", new Pinger().PING);
+  
+}
+
+exports.remote_monitor_works = function(test) {
+  
+  var p1, p2;
+  
+  var PingPong = toddick(
+    {
+      PING: function(PONG) {
+        test.ok( true );
+        PONG();
+      }
+    }
+  );
+
+  var Pinger = toddick(
+    {
+      PING: function(pingpong) {
+        this.monitor( pingpong, this.EXITED );
+        pingpong.EXIT();
+      },     
+      EXITED: function() {
+        p1.EXIT();
+        p2.EXIT();
         test.done();
       }
     }
   );
   
-  PingPong.trace_enabled = true;
-  Pinger.trace_enabled = true;
-  remote.RequestHandler.trace_enabled = true;
-  remote.Proxy.trace_enabled = true;
-  remote.MessageSender.trace_enabled = true;
-  remote.Portal.trace_enabled = true;
+  p1 = new remote.Portal(8910);
+  p1.PUBLISH("/pingpong", new PingPong());
 
-  p1 = new remote.Portal(8910).PUBLISH("/pingpong", new PingPong());
-
-  p2 = new remote.Portal(8911).PROXY("http://localhost:8910/pingpong", new Pinger().PING);
+  p2 = new remote.Portal(8911);
+  p2.PROXY("http://localhost:8910/pingpong", new Pinger().PING);
   
 }
+
+
+
 

@@ -722,22 +722,22 @@ exports.link_with_name_links = function(test) {
       
 }
 
-exports.constructor_returns_self = function(test) {
+exports.construct_constructs = function(test) {
   
-  test.expect(1);
+  test.expect(3);
   
   var constructor = toddick(
     {
-      MSG: function(instance) {
-        test.deepEqual(this.self, instance);
+      INIT: function(a,b,c) {
+        test.equal(a, 1);
+        test.equal(b, 2);
+        test.equal(c, 3);
         test.done();
       }
     }
   );
   
-  var instance = constructor();
-  
-  instance.MSG(instance);
+  var instance = constructor.construct([1,2,3]);
   
 }
 
@@ -849,12 +849,10 @@ exports.exit_sets_exit_reason_and_data = function(test) {
   
   test.expect(3);
 
-  toddick.trace_enabled = true;
-    
   var constructor = toddick(
     {
       INIT: function() {
-        this.exit('reason', {test: 'data'});
+        this.exit('test reason', {test: 'data'});
       }
     }
   );
@@ -866,7 +864,7 @@ exports.exit_sets_exit_reason_and_data = function(test) {
       process.nextTick(
         function() {
           test.equal(false, instance.is_active);
-          test.equal(instance.exit_reason, 'reason');
+          test.equal(instance.exit_reason, 'test reason');
           test.equal(instance.exit_data.test, 'data');
           test.done();
         }
