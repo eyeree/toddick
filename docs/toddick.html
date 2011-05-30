@@ -1,16 +1,5 @@
-<!DOCTYPE html>  <html> <head>   <title>toddick.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               toddick.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Core toddick functionality</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Node modules we use.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Toddick modules we use.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">registry</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./registry&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Every toddick instance gets an id that includes an unique number.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">next_toddick_ordinal</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Function: appendArgs</p>
-
-<p>Internal helper function that concatinates two arguments objects into an array of arguments, or
-returns one of the arguments objects itself if the other contains no arguments.</p>
-
-<pre><code> var args = appendArgs(saved_arguments, arguments);
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">appendArgs</span><span class="p">(</span><span class="nx">a1</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span><span class="p">(</span><span class="nx">a1</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">a2</span><span class="p">;</span>
-  <span class="k">if</span><span class="p">(</span><span class="nx">a2</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">a1</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a1</span><span class="p">);</span>
-  <span class="k">return</span> <span class="nx">args</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a2</span><span class="p">));</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>Function: toddick</h2>
+<!DOCTYPE html>  <html> <head>   <title>toddick.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activity.html">                 activity.js               </a>                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="remote-http.html">                 remote-http.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                                           <a class="source" href="when.html">                 when.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               toddick.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Core toddick functionality</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Node modules we use.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Toddick modules we use.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">registry</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./registry&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Every toddick instance gets an id that includes an unique number.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">next_toddick_ordinal</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h2>Function: toddick</h2>
 
 <p>Creates a toddick constructor.</p>
 
@@ -27,18 +16,18 @@ returns one of the arguments objects itself if the other contains no arguments.<
 
 <p>If export_module is provided, the constructor is added to the module exports.</p>
 
-<p>This function is available as the value returned by require('toddick');</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">export_name</span><span class="p">,</span> <span class="nx">export_module</span><span class="p">,</span> <span class="nx">handlers</span> <span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>The export_module parameter is optional.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">handlers</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+<p>This function is available as the value returned by require('toddick');</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">export_name</span><span class="p">,</span> <span class="nx">export_module</span><span class="p">,</span> <span class="nx">handlers</span> <span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>The export_module parameter is optional.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">handlers</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">handlers</span> <span class="o">=</span> <span class="nx">export_module</span><span class="p">;</span>
     <span class="nx">export_module</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
   <span class="p">}</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>The export_name parameter is optional.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">handlers</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>The export_name parameter is optional.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">handlers</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">handlers</span> <span class="o">=</span> <span class="nx">export_name</span><span class="p">;</span>
     <span class="nx">export_name</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Name used in trace output.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">type_name</span> <span class="o">=</span> <span class="nx">export_name</span> <span class="o">||</span> <span class="s1">&#39;toddick&#39;</span><span class="p">;</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Override the default type_name if we can.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">export_name</span> <span class="o">&amp;&amp;</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Name used in trace output.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">type_name</span> <span class="o">=</span> <span class="nx">export_name</span> <span class="o">||</span> <span class="s1">&#39;toddick&#39;</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Override the default type_name if we can.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">export_name</span> <span class="o">&amp;&amp;</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">type_name</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">.</span><span class="nx">makeTypeName</span><span class="p">(</span><span class="nx">export_name</span><span class="p">,</span> <span class="nx">export_module</span><span class="p">);</span>
   <span class="p">}</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h3>Toddick Constructor</h3>
+  </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h3>Toddick Constructor</h3>
 
 <p>Constructor returned by the toddick function.</p>
 
@@ -48,7 +37,7 @@ returns one of the arguments objects itself if the other contains no arguments.<
 <p><em>args</em> - passed to init message handler</p>
 
 <p><em>instance</em> - the toddick object.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">constructor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h4>external_this and internal_this</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h4>external_this and internal_this</h4>
 
 <p>A toddick is represented by two different objects in two distinct contexts. </p>
 
@@ -59,15 +48,17 @@ async) and a few other things.</p>
 <p>The "internal" object is passed to the handler functions. It's properties include functions
 that allow the toddick to interact with the framework as well as the toddick's message 
 dispatch functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">external_this</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>             
-    <span class="kd">var</span> <span class="nx">internal_this</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h4>private data</h4>
+    <span class="kd">var</span> <span class="nx">internal_this</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h4>private data</h4>
 
 <p>The private data maintained by the framework for the toddick is kept in the constructor
-function's closure as local variables.</p>             </td>             <td class="code">               <div class="highlight"><pre>    </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>The toddick's unique id.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">toddick_id</span> <span class="o">=</span> <span class="nx">type_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">next_toddick_ordinal</span><span class="o">++</span><span class="p">;</span>  
-    </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Tracks the toddicks monitoring this toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">monitors</span> <span class="o">=</span> <span class="p">{};</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Tracks the toddicks this toddick is monitoring.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">monitoring</span> <span class="o">=</span> <span class="p">{};</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Indicates if this toddick is active or if it has exited.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">is_active</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>The value passed to this.exit will be saved here.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">exit_reason</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Tracks the global names assigned to this toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">registrations</span> <span class="o">=</span> <span class="p">{};</span>       
+function's closure as local variables.</p>             </td>             <td class="code">               <div class="highlight"><pre>    </pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>The toddick's unique id.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">toddick_id</span> <span class="o">=</span> <span class="nx">type_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">next_toddick_ordinal</span><span class="o">++</span><span class="p">;</span>  
+    </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Tracks the toddicks monitoring this toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">monitors</span> <span class="o">=</span> <span class="p">{};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Tracks the toddicks this toddick is monitoring.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">monitoring</span> <span class="o">=</span> <span class="p">{};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Indicates if this toddick is active or if it has exited.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">is_active</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>The values passed to this.exit will be saved here.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">exit_reason</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">exit_data</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Tracks the global names assigned to this toddick.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">registrations</span> <span class="o">=</span> <span class="p">{};</span>    
+    </pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>thrown by this.exit to signal toddick exit.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">exit_exception</span> <span class="o">=</span> <span class="p">{};</span>   
     </pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <h4>Property: is_toddick</h4>
 
 <p>Exists and is true for all toddick objects.</p>
@@ -109,13 +100,25 @@ returned by a toddick constructor.</p>
         <span class="k">return</span> <span class="nx">exit_reason</span><span class="p">;</span>
       <span class="p">}</span>
     <span class="p">);</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <h4>Property: self</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <h4>Property: exit_data</h4>
+
+<p>After the toddick has exited, this property contains the value passed to the exit function.
+This property is available as <em>instance</em>.exit_data on a toddick instance object as
+returned by a toddick constructor.</p>
+
+<pre><code> var data = instance.exit_data;
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">external_this</span><span class="p">.</span><span class="nx">__defineGetter__</span><span class="p">(</span><span class="s1">&#39;exit_data&#39;</span><span class="p">,</span>
+      <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">exit_data</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <h4>Property: self</h4>
 
 <p>An alias for the toddick's instance object (the one returned by the constructor). This 
 property is available as this.self inside message handler functions.</p>
 
 <pre><code> var self = this.self;
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">self</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <h4>Function: trace</h4>
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">self</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <h4>Function: trace</h4>
 
 <p>Writes a trace message to the toddick log. This function is available as this.trace inside 
 message handler functions.</p>
@@ -130,7 +133,7 @@ message handler functions.</p>
         <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="nx">toddick_id</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
       <span class="p">}</span>
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <h4>Function: info</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <h4>Function: info</h4>
 
 <p>Writes an informational message to the toddick log. This function is available as this.info
 inside message handler functions.</p>
@@ -143,7 +146,7 @@ inside message handler functions.</p>
 <p><em>data</em> - An optional object that is written to the log as a JSON string.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">toddick_id</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <h4>Function: error</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <h4>Function: error</h4>
 
 <p>Writes an error message to the toddick log. This function is available as this.error inside 
 message handler functions.</p>
@@ -156,36 +159,47 @@ message handler functions.</p>
 <p><em>data</em> - An optional object that is written to the log as a JSON string.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">toddick_id</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <h3>Function: exit</h3>
+    </pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <h3>Function: exit</h3>
 
 <p>Makes the toddick inactive. This function is available as this.exit inside message handler 
 functions.</p>
 
-<pre><code>this.exit( [ reason ] )
+<pre><code>this.exit( [ reason [, data ] ] )
 </code></pre>
 
-<p><em>reason</em> - An optional value indicating why the toddick is exiting.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">exit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+<p><em>reason</em> - An optional value indicating why the toddick is exiting. It will be used
+as an <em>action</em> parameter value in a call to this.error and will be available via
+<em>instance</em>.exit_reason.</p>
+
+<p><em>data</em> - An optional object that contains any data associated with the exit reason.
+It will be used as an <em>data</em> parameter value in a call to this.error and will be available
+via <em>instance</em>.exit_data.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">exit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
       
-      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;exiting&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">reason</span><span class="o">:</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">monitors</span><span class="o">:</span> <span class="nx">monitors</span><span class="p">,</span> <span class="nx">monitoring</span><span class="o">:</span> <span class="nx">monitoring</span><span class="p">});</span>
+      <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;exit&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">reason</span><span class="o">:</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span><span class="p">});</span>
       
       <span class="nx">is_active</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-      <span class="nx">exit_reason</span> <span class="o">=</span> <span class="nx">reason</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>Unregister registered names.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">registrations</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">exit_reason</span> <span class="o">=</span> <span class="nx">reason</span><span class="p">;</span>
+      <span class="nx">exit_data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Log reason and data as error.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">internal_this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Unregister registered names.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">registrations</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">registry</span><span class="p">.</span><span class="nx">unregister</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
       <span class="p">}</span>
       <span class="nx">registrations</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Tell toddicks being monitoring they are no longer being monitoring.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">monitoring</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-        <span class="nx">value</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MONITOR_REMOVE</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">MSG</span><span class="p">);</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p>Tell toddicks being monitoring they are no longer being monitoring.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">monitoring</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">MSG</span> <span class="o">=</span> <span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="nx">MSG</span><span class="p">.</span><span class="nx">monitoringRemove</span><span class="p">(</span><span class="nx">MSG</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
       <span class="p">}</span>
       <span class="nx">monitoring</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Tell monitoring toddicks their message.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">msgid</span> <span class="k">in</span> <span class="nx">monitors</span><span class="p">)</span> <span class="p">{</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <p>Tell monitoring toddicks their message.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">msgid</span> <span class="k">in</span> <span class="nx">monitors</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">MSG</span> <span class="o">=</span> <span class="nx">monitors</span><span class="p">[</span><span class="nx">msgid</span><span class="p">];</span>
-        <span class="nx">MSG</span><span class="p">();</span>
+        <span class="nx">MSG</span><span class="p">(</span><span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
       <span class="p">}</span>
       <span class="nx">monitors</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <p>Signal toddick exit. The handlerWrapper function will ignore this exception.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">throw</span> <span class="nx">exit_exception</span><span class="p">;</span>
       
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <h4>Function: link</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <h4>Function: link</h4>
 
 <p>Causes both toddicks to exit when either exits. This function is available as this.link 
 inside message handler functions.</p>
@@ -220,7 +234,7 @@ anonymous toddick.  </p>
       <span class="k">return</span> <span class="nx">target</span><span class="p">;</span>
       
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <h4>Function: monitor</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <h4>Function: monitor</h4>
 
 <p>Causes a message to be sent when the target toddick exits. This function is available as 
 this.monitor inside message handler functions.</p>
@@ -251,7 +265,7 @@ or a registered toddick name.</p>
       
     <span class="p">}</span>
     
-    </pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <h4>Function: unmonitor</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <h4>Function: unmonitor</h4>
 
 <p>Stops monitoring previously started using this.monitor. This function is available as 
 this.unmonitor inside message handler functions.</p>
@@ -277,7 +291,7 @@ instance object.</p>
       <span class="nx">MSG</span><span class="p">.</span><span class="nx">monitoringRemove</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
       
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <h4>Function: register</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <h4>Function: register</h4>
 
 <p>Registers toddick by name. Throws if name already taken. This function is available and as
 <em>instance</em>.register on a toddick instance object as returned by a toddick constructor and as
@@ -294,7 +308,7 @@ this.register( name )
       <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;registered&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">});</span>
     <span class="p">}</span>
     <span class="nx">external_this</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span>  <span class="nx">internal_this</span><span class="p">.</span><span class="nx">register</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <h4>Function: unregister</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <h4>Function: unregister</h4>
 
 <p>Unregisters a toddick. Throws if not registered. This function is available and as 
 <em>instance</em>.unregister on a toddick instance object as returned by a toddick constructor and
@@ -314,7 +328,7 @@ this.unregister( name )
       <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;unregistered&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">});</span>
     <span class="p">}</span>
     <span class="nx">external_this</span><span class="p">.</span><span class="nx">unregister</span> <span class="o">=</span> <span class="nx">internal_this</span><span class="p">.</span><span class="nx">unregister</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <h4>Property: id</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <h4>Property: id</h4>
 
 <p>The toddick's unique id. This property is available as <em>instance</em>.id on a toddick instance 
 object as returned by a toddick constructor and as this.id inside message handler functions.</p>
@@ -328,7 +342,7 @@ var id = this.id
       <span class="p">}</span>
     <span class="p">);</span>
     <span class="nx">external_this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">internal_this</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <h4>Property: trace_enabled</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <h4>Property: trace_enabled</h4>
 
 <p>Enables tracing for a toddick. This property is available as <em>instance</em>.trace<em>enabled on a 
 toddick object as returned by a toddick constructor and as this.trace</em>enabled inside message
@@ -347,7 +361,7 @@ handler functions.</p>
         <span class="k">return</span> <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace_enabled</span><span class="p">;</span>
       <span class="p">}</span>
     <span class="p">);</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <h4>Function: defineMessage</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <h4>Function: defineMessage</h4>
 
 <p>Adds a message handler to the toddick. This function is available as this.defineMessage 
 inside message handler functions.</p>
@@ -369,7 +383,7 @@ message.</p>             </td>             <td class="code">               <div 
       <span class="nx">external_this</span><span class="p">[</span><span class="nx">message_name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">dispatcher</span><span class="p">;</span>
 
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <h4>Function: createDispatcher</h4>
+    </pre></div>             </td>           </tr>                               <tr id="section-42">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-42">&#182;</a>               </div>               <h4>Function: createDispatcher</h4>
 
 <p>Creates a message dispatch function. This function is intended for internal use by the 
 framework.</p>
@@ -382,32 +396,49 @@ framework.</p>
 <p><em>handler</em> - the message handler function to be called async by the dispatcher.</p>
 
 <p><em>inactive_handler</em> - the handler that is called if the toddick is inactive.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">createDispatcher</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">message_name</span><span class="p">,</span> <span class="nx">handler</span><span class="p">,</span> <span class="nx">inactive_handler</span><span class="p">)</span> <span class="p">{</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <h5>Function: handler_wrapper</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-43">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-43">&#182;</a>               </div>               <h5>Function: handlerWrapper</h5>
 
 <p>Wraps a message handler callback with error handling code.</p>
 
-<pre><code>handler_wrapper( args )
+<pre><code>handlerWrapper( args )
 </code></pre>
 
 <p><em>args</em> - An array of arguments that will be passed to the handler.</p>
 
-<p>This is an internal framework function.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">handler_wrapper</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+<p>This is an internal framework function.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">handlerWrapper</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="nx">is_active</span><span class="p">)</span> <span class="p">{</span>
           <span class="k">try</span> <span class="p">{</span>
-            <span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">internal_this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            </pre></div>             </td>           </tr>                               <tr id="section-44">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-44">&#182;</a>               </div>               <p>Call the handler.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">internal_this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            
           <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">exception</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">internal_this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;handler-error&#39;</span><span class="p">,</span> 
-              <span class="p">{</span>
-                <span class="nx">message</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
-                <span class="nx">arguments</span><span class="o">:</span> <span class="nx">args</span><span class="p">,</span>
-                <span class="nx">exception</span><span class="o">:</span> <span class="nx">exception</span>
+            </pre></div>             </td>           </tr>                               <tr id="section-45">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-45">&#182;</a>               </div>               <p>Handle exception thrown by handler. this.exit always throws exit_exception to
+unwind the stack, so that one is ignored.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span><span class="p">(</span> <span class="nx">exception</span> <span class="o">!==</span> <span class="nx">exit_exception</span> <span class="p">)</span> <span class="p">{</span>
+              
+              <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;handler-exception&#39;</span><span class="p">,</span> 
+                <span class="p">{</span>
+                  <span class="nx">msg</span><span class="o">:</span>  <span class="nx">message_name</span><span class="p">,</span>
+                  <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span><span class="p">,</span>
+                  <span class="nx">exception</span><span class="o">:</span> <span class="nx">exception</span>
+                <span class="p">}</span>
+              <span class="p">);</span>
+              
+              <span class="k">if</span><span class="p">(</span> <span class="nx">exception</span><span class="p">.</span><span class="nx">stack</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s2">&quot;\n&quot;</span><span class="p">,</span> <span class="nx">exception</span><span class="p">.</span><span class="nx">stack</span><span class="p">,</span> <span class="s2">&quot;\n&quot;</span> <span class="p">);</span>
               <span class="p">}</span>
-            <span class="p">);</span>
-            <span class="k">if</span><span class="p">(</span><span class="nx">message_name</span> <span class="o">===</span> <span class="s1">&#39;EXIT&#39;</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">internal_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;Error occured in exit handler. &#39;</span> <span class="o">+</span> <span class="nx">exception</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="nx">external_this</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="nx">exception</span><span class="p">);</span>
+              </pre></div>             </td>           </tr>                               <tr id="section-46">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-46">&#182;</a>               </div>               <p>Exceptions are passed to the EXIT handler. If the exception was thrown by the EXIT
+handler this.exit is called to force an exit instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>              <span class="k">if</span><span class="p">(</span><span class="nx">message_name</span> <span class="o">!==</span> <span class="s1">&#39;EXIT&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">external_this</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="s1">&#39;handler-exception&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">exception</span><span class="o">:</span> <span class="nx">exception</span> <span class="p">}</span> <span class="p">);</span>
+              <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">try</span> <span class="p">{</span>
+                  <span class="nx">internal_this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;EXIT-exception&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">exception</span><span class="o">:</span> <span class="nx">exception</span> <span class="p">});</span>
+                <span class="p">}</span> <span class="k">catch</span><span class="p">(</span> <span class="nx">expected_exit_exception</span> <span class="p">)</span> <span class="p">{</span>
+                  <span class="k">if</span><span class="p">(</span> <span class="nx">expected_exit_exception</span> <span class="o">!==</span> <span class="nx">exit_exception</span> <span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">log</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">,</span> <span class="s1">&#39;unexpected-exception&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">exception</span><span class="o">:</span> <span class="nx">expected_exit_exception</span> <span class="p">}</span> <span class="p">);</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+              
             <span class="p">}</span>
           <span class="p">}</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -416,7 +447,7 @@ framework.</p>
           <span class="p">}</span>
         <span class="p">}</span>
         
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <h5>Function: dispatcher</h5>
+      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-47">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-47">&#182;</a>               </div>               <h5>Function: dispatcher</h5>
 
 <p>The dispatcher function that will be returned.</p>
 
@@ -426,29 +457,33 @@ framework.</p>
 <p><em>args</em> -- arguments passed to handler function.</p>
 
 <p>This function is available as <em>instance</em>.<em>message_name</em> on a toddick instance object as
-returned by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">dispatcher</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+returned by a toddick constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">dispatcher</span><span class="p">;</span>
+      
+      <span class="nx">dispatcher</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">saved_arguments</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
         <span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(</span>
           <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;received&#39;</span><span class="p">,</span> 
               <span class="p">{</span>
-                <span class="nx">message</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
-                <span class="nx">arguments</span><span class="o">:</span> <span class="nx">saved_arguments</span><span class="p">,</span> 
+                <span class="nx">msg</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
+                <span class="nx">args</span><span class="o">:</span> <span class="nx">saved_arguments</span><span class="p">,</span> 
                 <span class="nx">is_active</span><span class="o">:</span> <span class="nx">is_active</span>
               <span class="p">}</span>
             <span class="p">);</span>
-            <span class="nx">handler_wrapper</span><span class="p">(</span><span class="nx">saved_arguments</span><span class="p">);</span>
+            <span class="nx">handlerWrapper</span><span class="p">(</span><span class="nx">saved_arguments</span><span class="p">);</span>
           <span class="p">}</span>
         <span class="p">);</span>
       <span class="p">};</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-42">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-42">&#182;</a>               </div>               <h5>Property: is<em>toddick</em>dispatcher</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-48">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-48">&#182;</a>               </div>               <h5>Property: is<em>toddick</em>message</h5>
 
 <p>Exists and is true for all toddick dispatchers. This property is available as 
-<em>dispatcher</em>.is<em>toddick</em>dispatcher on a message dispatch function.</p>
+<em>dispatcher</em>.is<em>toddick</em>message on a message dispatch function.</p>
 
-<pre><code> var is_dispatcher = dispatcher.is_toddick_dispatcher;
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">is_toddick_dispatcher</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-43">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-43">&#182;</a>               </div>               <h5>Property: id</h5>
+<pre><code> var is_dispatcher = dispatcher.is_toddick_message;
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">is_toddick_message</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      
+      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">message_name</span> <span class="o">=</span> <span class="nx">message_name</span><span class="p">;</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-49">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-49">&#182;</a>               </div>               <h5>Property: id</h5>
 
 <p>An unique id for the dispatcher instance. This property is available as <em>dispatcher</em>.id on
 a message dispatch function.</p>
@@ -457,11 +492,11 @@ a message dispatch function.</p>
 </code></pre>
 
 <p>The id is unique even among toddicks of the same type.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">toddick_id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">message_name</span><span class="p">;</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-44">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-44">&#182;</a>               </div>               <h5>Property: toddick</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-50">&#182;</a>               </div>               <h5>Property: toddick</h5>
 
 <p>An the toddick that will receive messages sent via the dispatcher. This property is
 available  as <em>dispatcher</em>.toddick on a message dispatch function.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">toddick</span> <span class="o">=</span> <span class="nx">external_this</span><span class="p">;</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-45">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-45">&#182;</a>               </div>               <h5>Function: sync</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-51">&#182;</a>               </div>               <h5>Function: sync</h5>
 
 <p>Calls the message handler synchronously with error handling. This function is available
 as <em>dispatcher</em>.sync on a message dispatch function.</p>
@@ -470,8 +505,8 @@ as <em>dispatcher</em>.sync on a message dispatch function.</p>
 </code></pre>
 
 <p><em>args</em> - The arguments that will be passed to the handler.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">handler_wrapper</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-46">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-46">&#182;</a>               </div>               <h5>Function: preproc</h5>
+        <span class="nx">handlerWrapper</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-52">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-52">&#182;</a>               </div>               <h5>Function: preproc</h5>
 
 <p>Returns a new dispatcher function that calls a provided function before calling the 
 origional message handler function. This function is available as <em>dispatcher</em>.preproc
@@ -502,17 +537,17 @@ message handler. If the function returns undefined the hander function is not ca
             <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">f</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
             <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> 
               <span class="p">{</span>
-                <span class="nx">message</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
-                <span class="nx">args_out</span><span class="o">:</span> <span class="nx">args</span>
+                <span class="nx">msg</span><span class="o">:</span> <span class="nx">message_name</span><span class="p">,</span>
+                <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span>
               <span class="p">}</span>
             <span class="p">);</span>
             <span class="k">if</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">handler_wrapper</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+              <span class="nx">handlerWrapper</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span>
           <span class="p">}</span>
         <span class="p">);</span>
       <span class="p">}</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-47">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-47">&#182;</a>               </div>               <h5>Function: withArgs</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-53">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-53">&#182;</a>               </div>               <h5>Function: withArgs</h5>
 
 <p>Creates a message dispatcher with bound arguments. This function is available as 
 <em>dispatcher</em>.withArgs on a message dispatch function.</p>
@@ -526,16 +561,17 @@ dispatch function was called.</p>             </td>             <td class="code"
         <span class="kd">var</span> <span class="nx">saved_args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">preproc</span><span class="p">(</span> <span class="s1">&#39;with-args&#39;</span><span class="p">,</span> 
           <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">appendArgs</span><span class="p">(</span><span class="nx">saved_args</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">toddick</span><span class="p">.</span><span class="nx">appendArgs</span><span class="p">(</span><span class="nx">saved_args</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
           <span class="p">}</span>
         <span class="p">);</span>
       <span class="p">}</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-48">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-48">&#182;</a>               </div>               <h5>Function: monitoringAdd</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-54">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-54">&#182;</a>               </div>               <h5>Function: monitoringAdd</h5>
 
 <p>Adds a toddick to the monitoring property. This function is intended for framework
 internal use only.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">monitoringAdd</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
         
         <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        
         <span class="k">if</span><span class="p">(</span><span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
           <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
             <span class="s1">&#39;Alread monitoring toddick &#39;</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; using message &#39;</span> <span class="o">+</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">id</span>
@@ -560,12 +596,13 @@ internal use only.</p>             </td>             <td class="code">          
         <span class="nx">target</span><span class="p">.</span><span class="nx">MONITOR_ADD</span><span class="p">(</span><span class="nx">MSG</span><span class="p">);</span>
         
       <span class="p">}</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-49">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-49">&#182;</a>               </div>               <h5>Function: monitoringRemove</h5>
+      </pre></div>             </td>           </tr>                               <tr id="section-55">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-55">&#182;</a>               </div>               <h5>Function: monitoringRemove</h5>
 
 <p>Removes a toddick from the monitoring proeprty. This function is intended for 
 framework internal use only.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">monitoringRemove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
         
         <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        
         <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">monitoring</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
           <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
             <span class="s1">&#39;Not monitoring toddick &#39;</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; using message &#39;</span> <span class="o">+</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">id</span>
@@ -581,51 +618,63 @@ framework internal use only.</p>             </td>             <td class="code">
       <span class="k">return</span> <span class="nx">dispatcher</span><span class="p">;</span>
       
     <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-50">&#182;</a>               </div>               <p>Create default MONITOR_ADD mesage dispatcher and handler.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="s1">&#39;MONITOR_ADD&#39;</span><span class="p">,</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-56">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-56">&#182;</a>               </div>               <p>Create default MONITOR_ADD mesage dispatcher and handler.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="s1">&#39;MONITOR_ADD&#39;</span><span class="p">,</span>
       <span class="kd">function</span> <span class="p">(</span><span class="nx">MSG</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// when active</span>
         <span class="nx">monitors</span><span class="p">[</span><span class="nx">MSG</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">MSG</span><span class="p">;</span>
       <span class="p">},</span>
       <span class="kd">function</span> <span class="p">(</span><span class="nx">MSG</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// when inactive</span>
-        <span class="nx">MSG</span><span class="p">();</span>
+        <span class="nx">MSG</span><span class="p">(</span><span class="s1">&#39;already-exited&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">reason</span><span class="o">:</span> <span class="nx">exit_reason</span><span class="p">,</span> <span class="nx">data</span><span class="o">:</span> <span class="nx">exit_data</span><span class="p">});</span>
       <span class="p">}</span>
-    <span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-51">&#182;</a>               </div>               <p>Create MONITOR_REMOVE mesage dispatcher and handler</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="s1">&#39;MONITOR_REMOVE&#39;</span><span class="p">,</span>
+    <span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-57">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-57">&#182;</a>               </div>               <p>Create MONITOR_REMOVE mesage dispatcher and handler</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="s1">&#39;MONITOR_REMOVE&#39;</span><span class="p">,</span>
       <span class="kd">function</span> <span class="p">(</span><span class="nx">msgid</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">delete</span> <span class="nx">monitors</span><span class="p">[</span><span class="nx">msgid</span><span class="p">];</span>
       <span class="p">}</span>
     <span class="p">);</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-52">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-52">&#182;</a>               </div>               <p>Create the default exit message dispatcher. Toddick can override.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="s1">&#39;EXIT&#39;</span><span class="p">,</span> 
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="nx">reason</span><span class="p">);</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-58">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-58">&#182;</a>               </div>               <p>Create the default exit message dispatcher. Toddick can override.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="s1">&#39;EXIT&#39;</span><span class="p">,</span> 
+      <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
       <span class="p">}</span>
     <span class="p">);</span>
 
-    </pre></div>             </td>           </tr>                               <tr id="section-53">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-53">&#182;</a>               </div>               <h4>Constructor Body</h4>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-54">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-54">&#182;</a>               </div>               <p>Create Dispatcher Functions</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">handler_name</span> <span class="k">in</span> <span class="nx">handlers</span><span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-59">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-59">&#182;</a>               </div>               <h4>Constructor Body</h4>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-60">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-60">&#182;</a>               </div>               <p>Create Dispatcher Functions</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">handler_name</span> <span class="k">in</span> <span class="nx">handlers</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">internal_this</span><span class="p">.</span><span class="nx">defineMessage</span><span class="p">(</span><span class="nx">handler_name</span><span class="p">,</span> <span class="nx">handlers</span><span class="p">[</span><span class="nx">handler_name</span><span class="p">]);</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-55">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-55">&#182;</a>               </div>               <p>Send INIT message</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span><span class="p">(</span><span class="nx">external_this</span><span class="p">.</span><span class="nx">INIT</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-61">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-61">&#182;</a>               </div>               <p>Send INIT message</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span><span class="p">(</span><span class="nx">external_this</span><span class="p">.</span><span class="nx">INIT</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">external_this</span><span class="p">.</span><span class="nx">INIT</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">external_this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">}</span>
     
     <span class="nx">internal_this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;created&#39;</span><span class="p">);</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-56">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-56">&#182;</a>               </div>               <p>Constructor returns this to allow for uses like:</p>
-
-<pre><code> var instance = constructor.apply(null, args);
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     
-  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-57">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-57">&#182;</a>               </div>               <h3>Property: constructor.trace_enabled</h3>
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-62">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-62">&#182;</a>               </div>               <h3>Property: constructor.trace_enabled</h3>
 
 <p>Enables/disables tracing for all toddicks of this type.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-58">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-58">&#182;</a>               </div>               <h3>Property: constructor.is_toddick_constructor</h3>
+  </pre></div>             </td>           </tr>                               <tr id="section-63">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-63">&#182;</a>               </div>               <h3>Property: constructor.is_toddick_constructor</h3>
 
-<p>Exists and is true on all toddick constructor functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">is_toddick_constructor</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-59">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-59">&#182;</a>               </div>               <p>Export the toddick type if we can</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">export_name</span> <span class="o">&amp;&amp;</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
+<p>Exists and is true on all toddick constructor functions.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">is_toddick_constructor</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-64">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-64">&#182;</a>               </div>               <h3>Property: constructor.type_name</h3>
+
+<p>The name that comes before the id in log output.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">type_name</span> <span class="o">=</span> <span class="nx">type_name</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-65">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-65">&#182;</a>               </div>               <h3>Function: constructor.construct</h3>
+
+<p>Like apply but creates a new object.</p>
+
+<pre><code>constructor.construct( [ args ] )
+</code></pre>
+
+<p><em>args</em> - An array of arguments to pass to the constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">constructor</span><span class="p">.</span><span class="nx">construct</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">args</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">F</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">F</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">constructor</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span>
+  <span class="p">}</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-66">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-66">&#182;</a>               </div>               <p>Export the toddick type if we can</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">export_name</span> <span class="o">&amp;&amp;</span> <span class="nx">export_module</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">export_module</span><span class="p">.</span><span class="nx">exports</span><span class="p">[</span><span class="nx">export_name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">constructor</span><span class="p">;</span>
   <span class="p">}</span>
   
   <span class="k">return</span> <span class="nx">constructor</span><span class="p">;</span>
 
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-60">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-60">&#182;</a>               </div>               <h2>Property: toddick.trace_enabled</h2>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-67">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-67">&#182;</a>               </div>               <h2>Property: toddick.trace_enabled</h2>
 
-<p>Enables/disables tracing for all toddicks.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">=</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="s1">&#39;TODDICK_TRACE&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;enabled&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-61">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-61">&#182;</a>               </div>               <h2>Function: toddick.find</h2>
+<p>Enables/disables tracing for all toddicks.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span> <span class="o">=</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="s1">&#39;TODDICK_TRACE&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;enabled&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-68">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-68">&#182;</a>               </div>               <h2>Function: toddick.find</h2>
 
 <p>Returns a registered toddick. Throws if not found.</p>
 
@@ -640,7 +689,7 @@ framework internal use only.</p>             </td>             <td class="code">
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">,</span> <span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-62">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-62">&#182;</a>               </div>               <h2>Function: toddick.tryFind</h2>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-69">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-69">&#182;</a>               </div>               <h2>Function: toddick.tryFind</h2>
 
 <p>Returns a registered toddick or undefined if not found.</p>
 
@@ -652,10 +701,10 @@ framework internal use only.</p>             </td>             <td class="code">
 <p><em>instance</em> - Returns the toddick instance object found.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">tryFind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="nx">registry</span><span class="p">.</span><span class="nx">tryFind</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
   <span class="k">if</span><span class="p">(</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">trace_enabled</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">,</span> <span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">,</span> <span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">found</span><span class="o">:</span> <span class="nx">found</span> <span class="o">?</span> <span class="nx">found</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">});</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-63">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-63">&#182;</a>               </div>               <h2>Function: toddick.makeTypeName</h2>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-70">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-70">&#182;</a>               </div>               <h2>Function: toddick.makeTypeName</h2>
 
 <p>Construct the name used in trace output for toddick of a given type.</p>
 
@@ -670,6 +719,17 @@ framework internal use only.</p>             </td>             <td class="code">
   <span class="kd">var</span> <span class="nx">module_name</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="nx">export_module</span><span class="p">.</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">export_module</span><span class="p">.</span><span class="nx">filename</span><span class="p">));</span>
   <span class="k">return</span> <span class="nx">module_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">export_name</span><span class="p">;</span>
 <span class="p">}</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-64">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-64">&#182;</a>               </div>               <p>Export toddick function/object</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-71">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-71">&#182;</a>               </div>               <h2>Function: appendArgs</h2>
+
+<p>Internal helper function that concatinates two arguments objects into an array of arguments, or
+returns one of the arguments objects itself if the other contains no arguments.</p>
+
+<pre><code> var args = toddick.appendArgs(saved_arguments, arguments);
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">.</span><span class="nx">appendArgs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a1</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">a1</span> <span class="o">||</span> <span class="nx">a1</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">a2</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">a2</span> <span class="o">||</span> <span class="nx">a2</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">a1</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a1</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">args</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a2</span><span class="p">));</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-72">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-72">&#182;</a>               </div>               <p>Export toddick function/object</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">;</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
