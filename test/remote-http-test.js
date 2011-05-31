@@ -211,7 +211,7 @@ exports.portal_works = function(test) {
   );
   
   p1 = new remote.Portal(8910);
-  p1.PUBLISH("/pingpong", new PingPong());
+  p1.PUBLISH("pingpong", new PingPong());
 
   p2 = new remote.Portal(8911);
   p2.PROXY("http://localhost:8910/pingpong", new Pinger().PING);
