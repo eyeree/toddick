@@ -1,11 +1,54 @@
 <!DOCTYPE html>  <html> <head>   <title>activity.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activity.html">                 activity.js               </a>                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="remote-http.html">                 remote-http.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                                           <a class="source" href="when.html">                 when.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               activity.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;toddick&#39;</span> <span class="p">);</span>
 <span class="kd">var</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;toddick/lib/timer&#39;</span><span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">activity</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">activity</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h2>Toddick: Supervisor</h2>
 
-<span class="nx">toddick</span><span class="p">(</span> <span class="s1">&#39;Supervisor&#39;</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span>
-  <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>default backoff</p>
+<p>Monitors a toddick and restarts the toddick when it exits. </p>
+
+<pre><code>var supervisor = new activity.Supervisor( [ config ] );
+
+var config = {
+  [ toddick:         (toddick constructor)                 ]
+  [ restart:         activity.Supervisor.restart.*         ]
+  [ restart_limit:   (number)                              ]
+  [ restart_backoff: activity.Supervisor.restart_backoff.* ]
+  [ restart_delay:   (number)                              ]
+  [ restart_factor:  (number)                              ]
+  [ restart_period:  (number)                              ]
+};
+</code></pre>
+
+<p><em>config</em> - An object that tells the supervisor how to behave. </p>
+
+<p><em>toddick</em> - The type of toddick started by the supervisor. Default is undefined. If undefined,
+restart must be 'never' (or not specified) and you send the supervisor a SUPERVISE message to
+give it toddick instances to supervise.</p>
+
+<p><em>restart</em> - One of the activity.Supervisor.restart property values. The default is never.</p>
+
+<ul>
+<li><p>never - The supervisor never restarts a supervised toddick. If the toddick exits with an
+error, the supervisor exits with an activity.Supervisor.reason.restart_limit error Otherwise
+the supervisor does not exit.</p></li>
+<li><p>on<em>error - The supervisor will restart toddics that exit with an error. If the toddick's
+restart limit has been reached, the supervisor exits with an 
+activity.Supervisor.reason.restart</em>limit error. Otherwise the toddick does not exit.</p></li>
+<li><p>always - The supervisor will restart toddicks that exit with or without an error. If the
+toddick's restart limit has been reached, the supervisor exits with an 
+activity.Supervisor.reason.restart_limit error. Otherwise the toddick does not exit.</p></li>
+</ul>
+
+<p><em>restart_limit</em> - The number of times a toddick can be restarted before the supervisor exits
+with a activity.Supervisor.reason.restart_limit error. The default is 0 meaning that the 
+toddick will never be restarted.</p>
+
+<p><em>restart_backoff</em> - One of the activity.Supervisor.restart_backoff property values:</p>
+
+<ul>
+<li><p>exponential - An exponential backoff algorithm is used. Before restarting a toddick, there is
+delay of (<em>restart_delay</em> * (<em>restart_factor</em> ^ n)) milliseconds, where n is the number of times 
+the toddick has been restarted. With default values, this results in the following delay 
+values:</p>
 
 <p>10 * 4 ^ 0 =    10
 10 * 4 ^ 1 =    40
@@ -13,78 +56,106 @@
 10 * 4 ^ 3 =   640
 10 * 4 ^ 4 =  2560
 10 * 4 ^ 5 = 10240
-10 * 4 ^ 6 = 40960</p>             </td>             <td class="code">               <div class="highlight"><pre>    
-    <span class="nx">INIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">config</span> <span class="p">)</span> <span class="p">{</span>
+10 * 4 ^ 6 = 40960</p></li>
+</ul>
+
+<p><em>restart_delay</em> - The delay value used by the restart_backoff algorithm. The default is 10. Set
+to 0 to prevent any delay between restart attempts.</p>
+
+<p><em>restart_factor</em> - The factor used by the exponential backoff algorithm. The default is 4.</p>
+
+<p><em>restart_period</em> - The number of milliseconds after starting a toddick that the toddick's restart
+count will be reset. The effect is that the supervisor will exit with a restart<em>limit error only
+if the toddick has to be restarted more that *restart</em>limit* times within this time period.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">(</span> <span class="s1">&#39;Supervisor&#39;</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span>
+  <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>Message: INIT</h3>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">INIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">config</span> <span class="p">)</span> <span class="p">{</span>
       
       <span class="k">if</span><span class="p">(</span> <span class="k">typeof</span> <span class="nx">config</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="p">)</span> <span class="p">{</span>
         <span class="nx">config</span> <span class="o">=</span> <span class="p">{};</span>
       <span class="p">}</span>
       
       <span class="k">if</span><span class="p">(</span> <span class="k">typeof</span> <span class="nx">config</span> <span class="o">!==</span> <span class="s1">&#39;object&#39;</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;bad-config&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;config is not an object&#39;</span> <span class="p">}</span> <span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> 
+          <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">bad_config</span><span class="p">,</span> 
+          <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;config is not an object&#39;</span> <span class="p">}</span> 
+        <span class="p">);</span>
       <span class="p">}</span>
       
-      <span class="k">if</span><span class="p">(</span> <span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span> <span class="p">)</span> <span class="p">{</span>
-        
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span> <span class="o">!==</span> <span class="s1">&#39;function&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">is_toddick_constructor</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;bad-config&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;toddick property not a toddick constructor&#39;</span> <span class="p">}</span> <span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="p">;</span>
-        <span class="p">}</span>
+      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="p">;</span>
+      <span class="p">}</span>
+    
+      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
       
-        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="o">=</span> <span class="s1">&#39;exponential&#39;</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        
-        <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="p">;</span>
-        
+      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="o">=</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart_backoff</span><span class="p">.</span><span class="nx">exponential</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart_delay</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart_factor</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restart_period</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
       <span class="p">}</span>
       
       <span class="k">switch</span><span class="p">(</span> <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="o">:</span>
-        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">always</span><span class="o">:</span>
-        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">always</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="o">:</span>
           <span class="k">break</span><span class="p">;</span>
           
         <span class="k">default</span><span class="o">:</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;bad-config&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;invalid restart setting: &#39;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">}</span> <span class="p">);</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> 
+            <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">bad_config</span><span class="p">,</span> 
+            <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;invalid restart setting: &#39;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">}</span> 
+          <span class="p">);</span>
           <span class="k">break</span><span class="p">;</span>
       <span class="p">}</span>
+      
+      <span class="k">if</span><span class="p">(</span> <span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span> <span class="k">typeof</span> <span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span> <span class="o">!==</span> <span class="s1">&#39;function&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">is_toddick_constructor</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span>
+            <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">bad_config</span><span class="p">,</span> 
+            <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;toddick property not a toddick constructor&#39;</span> <span class="p">}</span> 
+          <span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span> <span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="o">!==</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span> <span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span>
+            <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">bad_config</span><span class="p">,</span> 
+            <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;restart is not never but no toddick constructor was provided&#39;</span> <span class="p">}</span> 
+          <span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+  
+      <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span> <span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="nx">config</span> <span class="p">);</span>
       
       <span class="k">this</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">activities</span> <span class="o">=</span> <span class="p">{};</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
       
     <span class="p">},</span>
-    
-    <span class="nx">START</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h3>Message: START</h3>
+
+<p>Creates a toddick, monitors it, and takes the configured restart action when it exits.</p>
+
+<pre><code>supervisor.START( [ args... ] );
+</code></pre>
+
+<p><em>args</em> - arguments that will be passed to the toddick's constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">START</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
       
       <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="p">{</span> 
-        <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span><span class="o">++</span><span class="p">,</span>
+        <span class="nx">id</span><span class="o">:</span>            <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span><span class="o">++</span><span class="p">,</span>
+        <span class="nx">args</span><span class="o">:</span>          <span class="nx">arguments</span><span class="p">,</span>
         <span class="nx">restart_count</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
       <span class="p">};</span>
-      
-      <span class="nx">act</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">toddick</span><span class="p">.</span><span class="nx">appendArgs</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">args</span><span class="p">,</span> <span class="nx">arguments</span> <span class="p">);</span>
       
       <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span> 
         <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">toddick</span><span class="p">.</span><span class="nx">construct</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">args</span> <span class="p">),</span> 
@@ -102,12 +173,19 @@
       <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">act</span><span class="p">;</span>
       
     <span class="p">},</span>
-    
-    <span class="nx">SUPERVISE</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">instance</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h3>Message: SUPERVISE</h3>
+
+<p>Monitors the a provided toddick and takes the configured restart action when it exits. Can
+only be used when config.restart is never, as the supervisor does not have the arguments
+needed to restart the toddick.</p>
+
+<pre><code>supervisor.SUPERVISE( instance );
+</code></pre>
+
+<p><em>instance</em> - the toddick to supervise.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">SUPERVISE</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">instance</span> <span class="p">)</span> <span class="p">{</span>
       
       <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="nx">by</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-        <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span><span class="o">++</span><span class="p">,</span>
+        <span class="nx">id</span><span class="o">:</span>       <span class="k">this</span><span class="p">.</span><span class="nx">next_activity_id</span><span class="o">++</span><span class="p">,</span>
         <span class="nx">instance</span><span class="o">:</span> <span class="nx">instance</span>
       <span class="p">};</span>
       
@@ -116,32 +194,37 @@
       <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act</span><span class="p">.</span><span class="nx">id</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">act</span><span class="p">;</span>
       
     <span class="p">},</span>
-    
-    <span class="nx">EXITED</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h3>Message: EXITED</h3>
+
+<p>Sent via a monitor when a supervised toddick exits.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">EXITED</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
       
       <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act_id</span> <span class="p">];</span>
+      <span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">;</span>
+      
+      <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
       
       <span class="kd">var</span> <span class="nx">restart</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
       
       <span class="k">switch</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart</span> <span class="p">)</span> <span class="p">{</span>
         
-        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">always</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">always</span><span class="o">:</span>
           <span class="nx">restart</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
           <span class="k">break</span><span class="p">;</span>
           
-        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="o">:</span>
-          <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="o">:</span>
+          <span class="k">if</span><span class="p">(</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">restart</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
           <span class="p">}</span>
           <span class="k">break</span><span class="p">;</span>
       
-        <span class="k">case</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="o">:</span>
-          <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> 
+        <span class="k">case</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">never</span><span class="o">:</span>
+          <span class="k">if</span><span class="p">(</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> 
+              <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">restart_limit</span><span class="p">,</span> 
               <span class="p">{</span> 
-                <span class="nx">instance</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">,</span>
-                <span class="nx">reason</span><span class="o">:</span>   <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
-                <span class="nx">data</span><span class="o">:</span>     <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
+                <span class="nx">instance</span><span class="o">:</span> <span class="nx">instance</span><span class="p">,</span>
+                <span class="nx">reason</span><span class="o">:</span>   <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span>     <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span>
               <span class="p">}</span> 
             <span class="p">);</span>
           <span class="p">}</span>
@@ -153,13 +236,14 @@
         
         <span class="k">if</span><span class="p">(</span> 
           <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span> 
-          <span class="o">&amp;&amp;</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">restart_count</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span>
+          <span class="o">&amp;&amp;</span> <span class="nx">act</span><span class="p">.</span><span class="nx">restart_count</span> <span class="o">&gt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">restart_limit</span>
         <span class="p">)</span> <span class="p">{</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;restart-limit&#39;</span><span class="p">,</span> 
+          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> 
+            <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">restart_limit</span><span class="p">,</span> 
             <span class="p">{</span> 
-              <span class="nx">instance</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">,</span>
-              <span class="nx">reason</span><span class="o">:</span>   <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
-              <span class="nx">data</span><span class="o">:</span>     <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
+              <span class="nx">instance</span><span class="o">:</span> <span class="nx">instance</span><span class="p">,</span>
+              <span class="nx">reason</span><span class="o">:</span>   <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
+              <span class="nx">data</span><span class="o">:</span>     <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span>
             <span class="p">}</span> 
           <span class="p">);</span>
         <span class="p">}</span>
@@ -170,9 +254,9 @@
           
         <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span> <span class="s1">&#39;activity-restart&#39;</span><span class="p">,</span> 
           <span class="p">{</span> 
-            <span class="nx">instance</span><span class="o">:</span>      <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> 
-            <span class="nx">reason</span><span class="o">:</span>        <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
-            <span class="nx">data</span><span class="o">:</span>          <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
+            <span class="nx">instance</span><span class="o">:</span>      <span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> 
+            <span class="nx">reason</span><span class="o">:</span>        <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_reason</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span>          <span class="nx">instance</span><span class="p">.</span><span class="nx">exit_data</span><span class="p">,</span>
             <span class="nx">restart_count</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">restart_count</span><span class="p">,</span>
             <span class="nx">delay</span><span class="o">:</span>         <span class="nx">delay</span>
           <span class="p">}</span>
@@ -200,8 +284,9 @@
       <span class="p">}</span>
       
     <span class="p">},</span>
-    
-    <span class="nx">RESTART</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h3>Message: RESTART</h3>
+
+<p>Sent after a delay to restart a toddick that has exited.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">RESTART</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
       
       <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act_id</span> <span class="p">];</span>
       
@@ -216,8 +301,10 @@
       <span class="nx">act</span><span class="p">.</span><span class="nx">restart_timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
       
     <span class="p">},</span>
-    
-    <span class="nx">RESET_RESTART_PERIOD</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h3>Message: RESET<em>RESTART</em>PERIOD</h3>
+
+<p>If config.restart_period was specified, is sent after a delay to reset the toddick's restart
+count.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">RESET_RESTART_PERIOD</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">act_id</span> <span class="p">)</span> <span class="p">{</span>
       
       <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">act_id</span> <span class="p">];</span>
       
@@ -231,30 +318,41 @@
       <span class="p">}</span>
         
     <span class="p">},</span>
-    
-    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h3>Message: EXIT</h3>
+
+<p>The supervisor sends EXIT to all supervised toddicks when it exits.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
       
       <span class="k">for</span><span class="p">(</span> <span class="kd">var</span> <span class="nx">id</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span> <span class="p">)</span> <span class="p">{</span>
+        
         <span class="kd">var</span> <span class="nx">act</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activities</span><span class="p">[</span> <span class="nx">id</span> <span class="p">];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s2">&quot;activity&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
-        <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">is_active</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s2">&quot;exiting&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+        
+        <span class="k">if</span><span class="p">(</span> <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span> <span class="p">)</span> <span class="p">{</span>
           <span class="nx">act</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">);</span>
         <span class="p">}</span>
+        
       <span class="p">}</span>
-      
+    
       <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">);</span>
       
     <span class="p">}</span>
     
   <span class="p">}</span>
 <span class="p">);</span>
-    
-   
-<span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h3>Constants: restart</h3>
+
+<p>Allowed values for the config.restart property.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">on_error</span><span class="o">:</span> <span class="s1">&#39;on-error&#39;</span><span class="p">,</span>
   <span class="nx">always</span><span class="o">:</span>   <span class="s1">&#39;always&#39;</span><span class="p">,</span>
   <span class="nx">never</span><span class="o">:</span>    <span class="s1">&#39;never&#39;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h3>Constants: restart_backoff</h3>
+
+<p>Allowed values for the config.restart_backoff property.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart_backoff</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">exponential</span><span class="o">:</span> <span class="s1">&#39;exponential&#39;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h3>Constants: reason</h3>
+
+<p>Exit errors that may be used when a Supervisor exits.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">restart_limit</span><span class="o">:</span> <span class="s1">&#39;restart-limit&#39;</span><span class="p">,</span>
+  <span class="nx">bad_config</span><span class="o">:</span>    <span class="s1">&#39;bad-config&#39;</span>
 <span class="p">};</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
