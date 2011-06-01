@@ -80,7 +80,6 @@ var TestServer = toddick(
   
 );
 
-
 exports.client_does_get = function(test) {
   
   test.expect( 5 );
@@ -128,7 +127,6 @@ exports.client_does_get = function(test) {
   var t = new T();
   
 }
-
 
 exports.client_does_post = function(test) {
   
@@ -219,13 +217,14 @@ exports.portal_works = function(test) {
 }
 
 exports.remote_monitor_works = function(test) {
+
+  test.expect( 0 );
   
   var p1, p2;
   
   var PingPong = toddick(
     {
       PING: function(PONG) {
-        test.ok( true );
         PONG();
       }
     }
@@ -253,6 +252,40 @@ exports.remote_monitor_works = function(test) {
   
 }
 
+exports.remote_exit_returns_args = function(test) {
 
+  test.expect( 2 );
+    
+  var p1, p2;
+  
+  var PingPong = toddick(
+    {
+      PING: function(PONG) {
+        PONG();
+      }
+    }
+  );
 
+  var Pinger = toddick(
+    {
+      PING: function(pingpong) {
+        this.monitor( pingpong, this.EXITED );
+        pingpong.EXIT( 'test-reason', { test: 'data' } );
+      },     
+      EXITED: function( reason, data ) {
+        p1.EXIT();
+        p2.EXIT();
+        test.equal( 'test-reason', reason );
+        test.deepEqual( { test: 'data' }, data );
+        test.done();
+      }
+    }
+  );
+  
+  p1 = new remote.Portal(8910);
+  p1.PUBLISH("/pingpong", new PingPong());
 
+  p2 = new remote.Portal(8911);
+  p2.PROXY("http://localhost:8910/pingpong", new Pinger().PING);
+  
+}

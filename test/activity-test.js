@@ -26,33 +26,6 @@ exports.super_starts_toddick = function(test) {
   
 }
 
-exports.super_uses_cofig_args = function(test) {
-
-  test.expect(4);
-  
-  var T = toddick(
-    {
-      INIT: function(a, b, c, d) {
-        test.equal(a, 1);
-        test.equal(b, 2);
-        test.equal(c, 3);
-        test.equal(d, 4);
-        test.done();
-      }
-    }
-  );
-  
-  var s = new activity.Supervisor(
-    {
-      toddick: T,
-      args: [ 1, 2 ]
-    }
-  );
-  
-  s.START( 3, 4 );
-
-}
-
 exports.super_default_exits_if_error = function(test) {
   
   test.expect( 0 );
@@ -291,7 +264,7 @@ exports.super_always_exits_if_no_error = function(test) {
   
 }
 
-exports.super_applies_restart_limit = function(test) {
+exports.super_applies_default_restart_limit = function(test) {
   
   test.expect( 0 );
   
@@ -348,7 +321,8 @@ exports.super_applies_restart_limit = function(test) {
           new activity.Supervisor(
             {
               toddick: T,
-              restart_limit: 3
+              restart_limit: 3,
+              restart: activity.Supervisor.restart.always
             }
           ),
           this.EXITED
@@ -389,7 +363,8 @@ exports.super_exits_on_restarts_in_period = function(test) {
               restart_limit:  3,
               restart_period: 50,
               restart_factor: 1,
-              restart_delay:  10
+              restart_delay:  10,
+              restart: activity.Supervisor.restart.always
             }
           ),
           this.EXITED
@@ -432,7 +407,8 @@ exports.super_does_not_exit_on_restarts_out_of_period = function(test) {
               restart_limit:  6,
               restart_period: 50,
               restart_factor: 1,
-              restart_delay:  10
+              restart_delay:  10,
+              restart: activity.Supervisor.restart.always
             }
           ),
           this.EXITED
@@ -458,3 +434,4 @@ exports.super_does_not_exit_on_restarts_out_of_period = function(test) {
   var o = new O();
   
 }
+
