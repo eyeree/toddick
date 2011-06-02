@@ -328,7 +328,7 @@ exports.exception_sends_exit = function(test) {
         throw error;
       },
       EXIT: function(reason, data) {
-        test.equal('handler-exception', reason);
+        test.equal(toddick.reason.handler_exception, reason);
         test.deepEqual(data.exception, error);
         test.done();
         this.exit(reason);
