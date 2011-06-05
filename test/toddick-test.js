@@ -741,11 +741,6 @@ exports.construct_constructs = function(test) {
   
 }
 
-// TODO: 
-// link anonymous toddicks
-// preproc
-// withArgs
-
 exports.link_creates_anonymous_toddick = function(test) {
   
   test.expect(0);
@@ -875,3 +870,29 @@ exports.exit_sets_exit_reason_and_data = function(test) {
   
 }
 
+exports.getArgs_gets_all_saved_args = function(test) {
+  
+  test.expect(4);
+  
+  var constructor = toddick(
+    {
+      MSG: function() {
+      }
+    }
+  );
+  
+  var instance = new constructor();
+  
+  var msg1 = instance.MSG.withArgs(1, 2);
+  var msg2 = msg1.withArgs(3, 4);
+  
+  var args = msg2.getArgs();
+  
+  test.equal(args[0], 1);
+  test.equal(args[1], 2);
+  test.equal(args[2], 3);
+  test.equal(args[3], 4);
+  
+  test.done();
+  
+}
