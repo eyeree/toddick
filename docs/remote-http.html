@@ -1,10 +1,11 @@
-<!DOCTYPE html>  <html> <head>   <title>remote-http.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activity.html">                 activity.js               </a>                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="remote-http.html">                 remote-http.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                                           <a class="source" href="when.html">                 when.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               remote-http.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;toddick&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;toddick/lib/timer&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">activity</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;toddick/lib/activity&#39;</span><span class="p">);</span>
+<!DOCTYPE html>  <html> <head>   <title>remote-http.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activity.html">                 activity.js               </a>                                           <a class="source" href="dispatch.html">                 dispatch.js               </a>                                           <a class="source" href="http.html">                 http.js               </a>                                           <a class="source" href="log.html">                 log.js               </a>                                           <a class="source" href="registry.html">                 registry.js               </a>                                           <a class="source" href="remote-http.html">                 remote-http.js               </a>                                           <a class="source" href="timer.html">                 timer.js               </a>                                           <a class="source" href="toddick.html">                 toddick.js               </a>                                           <a class="source" href="when.html">                 when.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               remote-http.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">toddick</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;toddick&#39;</span> <span class="p">);</span>
+<span class="kd">var</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;toddick/lib/timer&#39;</span> <span class="p">);</span>
+<span class="kd">var</span> <span class="nx">activity</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;toddick/lib/activity&#39;</span> <span class="p">);</span>
+<span class="kd">var</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;toddick/lib/http&#39;</span> <span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">os</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;os&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">node_http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;http&#39;</span> <span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">os</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span> <span class="s1">&#39;os&#39;</span> <span class="p">);</span>
 
 <span class="kd">var</span> <span class="nx">remote</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">;</span>
 
@@ -293,7 +294,7 @@ a remote.Portal toddick.</p>             </td>             <td class="code">    
       
       <span class="k">this</span><span class="p">.</span><span class="nx">portal</span> <span class="o">=</span> <span class="nx">portal</span><span class="p">;</span>
       
-      <span class="k">this</span><span class="p">.</span><span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">REQUEST</span><span class="p">.</span><span class="nx">sync</span> <span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">server</span> <span class="o">=</span> <span class="nx">node_http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">REQUEST</span><span class="p">.</span><span class="nx">sync</span> <span class="p">);</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span> <span class="nx">port</span> <span class="p">);</span>
       
       <span class="k">this</span><span class="p">.</span><span class="nx">request_supervisor</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">link</span><span class="p">(</span> 
@@ -495,7 +496,12 @@ a JSON object such as:</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">SET_PROXY_ARG</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">(</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">arg_name</span><span class="p">,</span> <span class="nx">message_name</span><span class="p">,</span> <span class="nx">proxy</span> <span class="p">)</span>
           <span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">args</span><span class="p">[</span> <span class="nx">arg_name</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">proxy</span><span class="p">[</span> <span class="nx">message_name</span> <span class="p">];</span>
+          <span class="kd">var</span> <span class="nx">def</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span> <span class="nx">arg_name</span> <span class="p">];</span>
+          <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">proxy</span><span class="p">[</span> <span class="nx">message_name</span> <span class="p">];</span>
+          <span class="k">if</span><span class="p">(</span> <span class="nx">def</span><span class="p">.</span><span class="nx">args</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">withArgs</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">def</span><span class="p">.</span><span class="nx">args</span> <span class="p">);</span>
+          <span class="p">}</span>
+          <span class="nx">args</span><span class="p">[</span> <span class="nx">arg_name</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
         <span class="p">}</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="nx">args</span><span class="p">[</span> <span class="nx">arg_name</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">proxy</span><span class="p">;</span>
@@ -545,17 +551,17 @@ by the protal toddick. All other messages are sent to the proxied toddick.      
       <span class="k">this</span><span class="p">.</span><span class="nx">client_supervisor</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">link</span><span class="p">(</span>
         <span class="k">new</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">(</span>
           <span class="p">{</span>
-            <span class="nx">toddick</span><span class="o">:</span>       <span class="nx">remote</span><span class="p">.</span><span class="nx">Client</span><span class="p">,</span>
+            <span class="nx">toddick</span><span class="o">:</span>       <span class="nx">http</span><span class="p">.</span><span class="nx">JsonClient</span><span class="p">,</span>
             <span class="nx">restart</span><span class="o">:</span>       <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">on_error</span><span class="p">,</span>
             <span class="nx">restart_limit</span><span class="o">:</span> <span class="mi">5</span>
           <span class="p">}</span>
         <span class="p">)</span>
       <span class="p">);</span>
       
-      <span class="k">this</span><span class="p">.</span><span class="nx">client_supervisor</span><span class="p">.</span><span class="nx">START</span><span class="p">(</span> <span class="nx">url</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">MSG</span> <span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">client_supervisor</span><span class="p">.</span><span class="nx">START</span><span class="p">(</span> <span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">MSG</span> <span class="p">);</span>
       
     <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>/ ### Message: EXIT</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <h3>Message: EXIT</h3>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
       </pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <p>If the request failed, create a def that will cause the proxy to exit immediatly.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span> <span class="nx">reason</span> <span class="o">===</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="p">)</span> <span class="p">{</span>
         
         <span class="k">this</span><span class="p">.</span><span class="nx">MSG</span><span class="p">(</span>
@@ -601,7 +607,7 @@ by the protal toddick. All other messages are sent to the proxied toddick.      
       <span class="p">);</span>
       
     <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <p>/ ### Message: EXIT</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <h3>Message: EXIT</h3>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">EXIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">reason</span><span class="p">,</span> <span class="nx">data</span> <span class="p">)</span> <span class="p">{</span>
       </pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <p>If the request failed, we exit without error.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span> <span class="nx">reason</span> <span class="o">===</span> <span class="nx">activity</span><span class="p">.</span><span class="nx">Supervisor</span><span class="p">.</span><span class="nx">reason</span><span class="p">.</span><span class="nx">restart_limit</span> <span class="p">)</span> <span class="p">{</span>
         
         <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
@@ -814,6 +820,10 @@ the portal will send a <strong>PROXY_EXIT</strong> message to the proxy toddick 
         <span class="nx">message</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">message_name</span>
       <span class="p">};</span>
       
+      <span class="k">if</span><span class="p">(</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">getArgs</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">msg</span><span class="p">.</span><span class="nx">proxy_def</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">getArgs</span><span class="p">();</span>
+      <span class="p">}</span>
+      
       <span class="nx">args</span><span class="p">[</span> <span class="nx">arg_name</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">proxy_def</span><span class="p">;</span>
       
       <span class="k">if</span><span class="p">(</span> <span class="o">--</span><span class="k">this</span><span class="p">.</span><span class="nx">task_count</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
@@ -824,122 +834,7 @@ the portal will send a <strong>PROXY_EXIT</strong> message to the proxy toddick 
     </pre></div>             </td>           </tr>                               <tr id="section-55">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-55">&#182;</a>               </div>               <h3>Message: SEND_MESSAGE</h3>
 
 <p>Sends the HTTP request with the message.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">SEND_MESSAGE</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">link</span><span class="p">(</span> <span class="k">new</span> <span class="nx">remote</span><span class="p">.</span><span class="nx">Client</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="p">)</span> <span class="p">);</span>
-    <span class="p">}</span>
-    
-  <span class="p">}</span>
-<span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-56">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-56">&#182;</a>               </div>               <h2>Toddick: Client</h2>
-
-<p>An HTTP client that sends and receives JSON format objects.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">toddick</span><span class="p">(</span> <span class="s1">&#39;Client&#39;</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span>
-  <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-57">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-57">&#182;</a>               </div>               <h3>Message: INIT</h3>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">INIT</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">req_url</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">MSG</span> <span class="p">)</span> <span class="p">{</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">MSG</span> <span class="o">=</span> <span class="nx">MSG</span><span class="p">;</span>
-      
-      <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req_url</span><span class="p">);</span>
-      
-      <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="nx">host</span><span class="o">:</span>    <span class="nx">parsed</span><span class="p">.</span><span class="nx">hostname</span><span class="p">,</span>
-        <span class="nx">port</span><span class="o">:</span>    <span class="nx">parsed</span><span class="p">.</span><span class="nx">port</span><span class="p">,</span>
-        <span class="nx">path</span><span class="o">:</span>    <span class="nx">parsed</span><span class="p">.</span><span class="nx">pathname</span><span class="p">,</span>
-        <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s1">&#39;accept&#39;</span> <span class="o">:</span> <span class="s1">&#39;application/json&#39;</span>
-        <span class="p">}</span>
-      <span class="p">};</span>
-      
-      <span class="k">if</span><span class="p">(</span> <span class="nx">content</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="s1">&#39;POST&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/json&#39;</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span><span class="p">;</span>
-      <span class="p">}</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">req</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">request</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">RESPONSE</span><span class="p">.</span><span class="nx">sync</span><span class="p">);</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">req</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ERROR</span><span class="p">.</span><span class="nx">sync</span> <span class="p">);</span>
-      
-      <span class="k">if</span><span class="p">(</span> <span class="nx">content</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span> <span class="s1">&#39;sent&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">content</span><span class="o">:</span> <span class="nx">content</span> <span class="p">}</span> <span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">req</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span> <span class="nx">content</span> <span class="p">)</span> <span class="p">);</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">req</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
-      <span class="p">}</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">link</span><span class="p">(</span> <span class="k">new</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">Timeout</span><span class="p">(</span> <span class="mi">5000</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">TIMEOUT</span> <span class="p">)</span> <span class="p">);</span>
-      
-    <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-58">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-58">&#182;</a>               </div>               <h3>Message: TIMEOUT</h3>
-
-<p>Sent if HTTP request timesout.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">TIMEOUT</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">req</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;timeout&#39;</span> <span class="p">);</span>
-    <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-59">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-59">&#182;</a>               </div>               <h3>Message: ERROR</h3>
-
-<p>Sent if the HTTP request resulted in an error.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">ERROR</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span> <span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">error</span><span class="o">:</span> <span class="nx">error</span><span class="p">}</span> <span class="p">);</span>
-    <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-60">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-60">&#182;</a>               </div>               <h3>Message: RESPONSE</h3>
-
-<p>Sent when a response to the request is received.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">RESPONSE</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-        
-      <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span><span class="p">;</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">RESPONSE_DATA</span><span class="p">.</span><span class="nx">sync</span><span class="p">);</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">RESPONSE_END</span><span class="p">.</span><span class="nx">sync</span><span class="p">);</span>
-      
-    <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-61">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-61">&#182;</a>               </div>               <h3>Message: RESPONSE_DATA</h3>
-
-<p>Sent when response data is received.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">RESPONSE_DATA</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">;</span>
-    <span class="p">},</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-62">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-62">&#182;</a>               </div>               <h3>Message: RESPONSE_END</h3>
-
-<p>Sent when all response data has been received.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">RESPONSE_END</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      
-      <span class="k">if</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">!==</span> <span class="mi">200</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">!==</span> <span class="mi">204</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;response-status&#39;</span><span class="p">,</span> 
-          <span class="p">{</span> 
-            <span class="nx">statusCode</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">,</span> 
-            <span class="nx">headers</span><span class="o">:</span>    <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span>
-            <span class="nx">content</span><span class="o">:</span>    <span class="k">this</span><span class="p">.</span><span class="nx">content</span>
-          <span class="p">}</span>
-        <span class="p">);</span>
-      <span class="p">}</span>
-      
-      <span class="k">if</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">===</span> <span class="mi">200</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;application/json&#39;</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;response-content-type&#39;</span><span class="p">,</span>
-          <span class="p">{</span> 
-            <span class="nx">statusCode</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">,</span> 
-            <span class="nx">headers</span><span class="o">:</span>    <span class="k">this</span><span class="p">.</span><span class="nx">res</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span>
-            <span class="nx">content</span><span class="o">:</span>    <span class="k">this</span><span class="p">.</span><span class="nx">content</span>
-          <span class="p">}</span>
-        <span class="p">);</span>
-      <span class="p">}</span>
-  
-      <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
-      <span class="k">if</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">try</span> <span class="p">{</span>
-          <span class="nx">result</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">content</span><span class="p">);</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span> <span class="s1">&#39;received&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">content</span><span class="o">:</span> <span class="nx">result</span> <span class="p">}</span> <span class="p">);</span>
-        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span> <span class="nx">exception</span> <span class="p">)</span> <span class="p">{</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="s1">&#39;content-parse&#39;</span><span class="p">,</span>
-            <span class="p">{</span>
-              <span class="nx">content</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span>
-              <span class="nx">exception</span><span class="o">:</span> <span class="nx">exception</span>
-            <span class="p">}</span>
-          <span class="p">);</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-      
-      <span class="k">if</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">MSG</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">MSG</span><span class="p">(</span> <span class="nx">result</span> <span class="p">);</span>
-      <span class="p">}</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
-      
+      <span class="k">this</span><span class="p">.</span><span class="nx">link</span><span class="p">(</span> <span class="k">new</span> <span class="nx">http</span><span class="p">.</span><span class="nx">JsonClient</span><span class="p">(</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="p">)</span> <span class="p">);</span>
     <span class="p">}</span>
     
   <span class="p">}</span>
